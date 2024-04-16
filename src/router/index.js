@@ -160,6 +160,14 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/markdown',
+    // component: Layout,
+    component: () => import('@/views/markdown/index.vue'),
+    name: 'MarkdownDemo',
+    meta: { title: 'Markdown' }
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
