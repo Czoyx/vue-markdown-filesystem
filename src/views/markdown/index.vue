@@ -1,7 +1,7 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar">
-      <SideBar></SideBar>
+      <SideBar @change-markdown="changeMarkdown" />
     </div>
     <div class="md-content">
       <el-card
@@ -24,21 +24,13 @@
             <el-form-item prop="title">
               <el-input
                 v-model="ruleForm.title"
-                placeholder="输入主题名称"
+                placeholder="输入标题"
+                :disabled="true"
               />
             </el-form-item>
 
             <!--Markdown-->
             <div id="vditor" />
-
-<!--            <b-taginput-->
-<!--              v-model="ruleForm.tags"-->
-<!--              class="my-3"-->
-<!--              maxlength="15"-->
-<!--              maxtags="3"-->
-<!--              ellipsis-->
-<!--              placeholder="请输入主题标签，限制为 15 个字符和 3 个标签"-->
-<!--            />-->
 
             <el-form-item>
               <el-button
@@ -59,18 +51,19 @@
 // import { post } from '@/api/post'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import SideBar from "@/views/markdown/SideBar.vue";
+import SideBar from '@/views/markdown/SideBar.vue'
+import { getFileContent, updateFileContent } from '@/api/file'
 
 export default {
   name: 'TopicPost',
-  components: {SideBar},
+  components: { SideBar },
 
   data() {
     return {
       contentEditor: {},
+      currentContentId: '',
       ruleForm: {
         title: '', // 标题
-        tags: [], // 标签
         content: '' // 内容
       },
       rules: {
@@ -115,21 +108,25 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async(valid) => {
         if (valid) {
           if (
             this.contentEditor.getValue().length === 1 ||
             this.contentEditor.getValue() == null ||
             this.contentEditor.getValue() === ''
           ) {
-            alert('话题内容不可为空')
+            this.$message.warning('话题内容不可为空')
             return false
           }
-          if (this.ruleForm.tags == null || this.ruleForm.tags.length === 0) {
-            alert('标签不可以为空')
-            return false
+          const content = this.contentEditor.getValue()
+          const res = await updateFileContent({
+            'content': content,
+            'file_id': this.currentContentId
+          })
+          const { code, data, msg } = res
+          if (code === 200) {
+            this.$message.success(msg)
           }
-          this.ruleForm.content = this.contentEditor.getValue()
           // post(this.ruleForm).then((response) => {
           //   const { data } = response
           //   setTimeout(() => {
@@ -149,6 +146,13 @@ export default {
       this.$refs[formName].resetFields()
       this.contentEditor.setValue('')
       this.ruleForm.tags = ''
+    },
+    async changeMarkdown(id, name) {
+      this.ruleForm.title = name
+      this.currentContentId = id
+      const res = await getFileContent(id)
+      const { code, data, msg } = res
+      this.contentEditor.setValue(data)
     }
   }
 }
@@ -159,13 +163,13 @@ export default {
   display: flex;
   height: 100%;
   .left-side-bar{
-    //width: 250px;
-    //height: 100%;
-    //background-color: #f4f4f4;
-    //position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: #f4f4f4;
+    position: fixed;
   }
   .md-content{
-    //margin-left: 250px; /* Same as sidebar width */
+    margin-left: 250px; /* Same as sidebar width */
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
