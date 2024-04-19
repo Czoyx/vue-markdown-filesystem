@@ -1,7 +1,7 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar">
-      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" @close-dialog="closeDialog" />
+      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
     </div>
     <div class="md-content">
       <el-card
@@ -44,7 +44,7 @@
         </div>
       </el-card>
     </div>
-    <CreateDialog :show="createDialogVisible" />
+    <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -79,7 +79,9 @@ export default {
           }
         ]
       },
-      createDialogVisible: false
+      createDialogVisible: false,
+      createType: 'file', // 新建类型,文件夹或文件
+      currentParentId: ''
     }
   },
   mounted() {
@@ -155,11 +157,20 @@ export default {
       this.currentContentId = id
       const res = await getFileContent(id)
       const { code, data, msg } = res
-      this.contentEditor.setValue(data)
+      if (code === 200) {
+        this.contentEditor.setValue(data)
+      } else {
+        this.$message.error(msg)
+      }
     },
-    createFile(id) {
+    createFile(id, type) {
+      this.currentParentId = id
+      if (type === 'folder') {
+        this.createType = 'folder'
+      }
       this.createDialogVisible = true
-    }, closeDialog() {
+    },
+    closeDialog() {
       this.createDialogVisible = false
     }
   }

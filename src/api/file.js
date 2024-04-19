@@ -44,3 +44,10 @@ export function createFolder(data) {
     data: data
   })
 }
+
+export function deleteFile(id) {
+  return request({
+    url: `/file/delete/${id}`,
+    method: 'delete'
+  })
+}

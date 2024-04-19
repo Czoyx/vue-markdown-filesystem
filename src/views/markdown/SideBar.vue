@@ -20,7 +20,7 @@
           <el-button
             type="text"
             size="mini"
-            @click="() => remove(node, data)"
+            @click="() => deleteFolderOrFile(data)"
           >
             删除
           </el-button>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { createFile, getFileList, getFileListById } from '@/api/file'
+import { deleteFile, getFileList, getFileListById } from '@/api/file'
 
 export default {
   data() {
@@ -147,14 +147,13 @@ export default {
       } else {
         this.$emit('create-folder', node.id)
       }
-
-      // const data = {
-      //   content: 'string',
-      //   file_name: 'string',
-      //   parent_id: node.id
-      // }
-      // const res = await createFile()
-      // console.log(data)
+    },
+    deleteFolderOrFile(node) {
+      const res = deleteFile(node.id)
+      const { code, data, msg } = res
+      if (code === 200) {
+        this.$message.success('删除成功')
+      }
     }
   }
 }
