@@ -4,8 +4,10 @@
       :props="props"
       :load="loadNode"
       :current-node-key="currentNodeKey"
+      :highlight-current="true"
       lazy
       @current-change="handleNodeClick"
+      @node-click="handleNodeClick"
     />
     <!--    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">-->
     <!--      <el-radio-button :label="false">展开</el-radio-button>-->
@@ -66,7 +68,7 @@ export default {
       console.log(key, keyPath)
     },
     handleNodeClick(node) {
-      if (node.isLeaf) {
+      if (node.leaf && node.id !== '') {
         this.$emit('change-markdown', node.id, node.name)
         console.log(node)
       }
