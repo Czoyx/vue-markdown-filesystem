@@ -1,9 +1,12 @@
 <template>
   <div>
     <el-tree
+      ref="tree"
+      :data="treeData"
       :props="props"
       :load="loadNode"
       :current-node-key="currentNodeKey"
+      node-key="id"
       lazy
       @current-change="handleNodeClick"
     >
@@ -66,7 +69,8 @@ export default {
       },
       isCollapse: true,
       fileList: [],
-      currentNodeKey: ''
+      currentNodeKey: '',
+      treeData: []
     }
   },
   async mounted() {
@@ -86,6 +90,7 @@ export default {
       console.log(key, keyPath)
     },
     handleNodeClick(node) {
+      console.log('side1', this.$refs.tree.getNode())
       this.currentId = node.id ? node.id : node.parentId
       if (node.leaf) {
         if (node.id) {
@@ -128,6 +133,7 @@ export default {
           })
           console.log('fileList', fileList)
           if (fileList.length > 0) {
+            console.log('treeData', this.treeData)
             return resolve(fileList)
           } else {
             return resolve([{ name: '暂无数据', leaf: true, parentId: node.data.id }])
@@ -136,9 +142,6 @@ export default {
           this.$message.error(msg)
           resolve([])
         }
-      }
-      if (node.isLeaf) {
-        console.log('点击了叶子节点')
       }
     },
     async createFolderOrFile(node, type) {

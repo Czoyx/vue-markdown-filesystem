@@ -2,6 +2,7 @@
   <div class="md-container">
     <div class="left-side-bar">
       <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
+      <SideBar2 />
     </div>
     <div class="md-content">
       <el-card
@@ -53,12 +54,13 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
+import SideBar2 from '@/views/markdown/SideBar2.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
 import CreateDialog from '@/views/markdown/CreateDialog.vue'
 
 export default {
   name: 'TopicPost',
-  components: { CreateDialog, SideBar },
+  components: { CreateDialog, SideBar, SideBar2 },
 
   data() {
     return {
