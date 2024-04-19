@@ -4,11 +4,29 @@
       :props="props"
       :load="loadNode"
       :current-node-key="currentNodeKey"
-      :highlight-current="true"
       lazy
       @current-change="handleNodeClick"
-      @node-click="handleNodeClick"
-    />
+    >
+      <span slot-scope="{ node, data }" class="custom-tree-node">
+        <span>{{ node.label }}</span>
+        <span>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => createFolderOrFile(data,'file')"
+          >
+            新建
+          </el-button>
+          <el-button
+            type="text"
+            size="mini"
+            @click="() => remove(node, data)"
+          >
+            删除
+          </el-button>
+        </span>
+      </span>
+    </el-tree>
     <!--    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">-->
     <!--      <el-radio-button :label="false">展开</el-radio-button>-->
     <!--      <el-radio-button :label="true">收起</el-radio-button>-->
@@ -34,7 +52,7 @@
 </template>
 
 <script>
-import { getFileList, getFileListById } from '@/api/file'
+import { createFile, getFileList, getFileListById } from '@/api/file'
 
 export default {
   data() {
@@ -68,9 +86,12 @@ export default {
       console.log(key, keyPath)
     },
     handleNodeClick(node) {
-      if (node.leaf && node.id !== '') {
-        this.$emit('change-markdown', node.id, node.name)
-        console.log(node)
+      this.currentId = node.id ? node.id : node.parentId
+      if (node.leaf) {
+        if (node.id) {
+          this.$emit('change-markdown', node.id, node.name)
+          console.log(node)
+        }
       }
     },
     async loadNode(node, resolve) {
@@ -86,9 +107,6 @@ export default {
               return obj
             }
           })
-          // this.fileList = data.filter((obj) => {
-          //   return obj.type === 1
-          // })
           return resolve(fileList)
         } else {
           this.$message.error(msg)
@@ -112,7 +130,7 @@ export default {
           if (fileList.length > 0) {
             return resolve(fileList)
           } else {
-            return resolve([{ name: '暂无数据', leaf: true }])
+            return resolve([{ name: '暂无数据', leaf: true, parentId: node.data.id }])
           }
         } else {
           this.$message.error(msg)
@@ -122,6 +140,21 @@ export default {
       if (node.isLeaf) {
         console.log('点击了叶子节点')
       }
+    },
+    async createFolderOrFile(node, type) {
+      if (type === 'file') {
+        this.$emit('create-file', node.id)
+      } else {
+        this.$emit('create-folder', node.id)
+      }
+
+      // const data = {
+      //   content: 'string',
+      //   file_name: 'string',
+      //   parent_id: node.id
+      // }
+      // const res = await createFile()
+      // console.log(data)
     }
   }
 }

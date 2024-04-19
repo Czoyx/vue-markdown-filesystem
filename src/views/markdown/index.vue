@@ -1,7 +1,7 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar">
-      <SideBar @change-markdown="changeMarkdown" />
+      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" @close-dialog="closeDialog" />
     </div>
     <div class="md-content">
       <el-card
@@ -44,6 +44,7 @@
         </div>
       </el-card>
     </div>
+    <CreateDialog :show="createDialogVisible" />
   </div>
 </template>
 
@@ -53,10 +54,11 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
+import CreateDialog from '@/views/markdown/CreateDialog.vue'
 
 export default {
   name: 'TopicPost',
-  components: { SideBar },
+  components: { CreateDialog, SideBar },
 
   data() {
     return {
@@ -76,7 +78,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      createDialogVisible: false
     }
   },
   mounted() {
@@ -153,6 +156,11 @@ export default {
       const res = await getFileContent(id)
       const { code, data, msg } = res
       this.contentEditor.setValue(data)
+    },
+    createFile(id) {
+      this.createDialogVisible = true
+    }, closeDialog() {
+      this.createDialogVisible = false
     }
   }
 }

@@ -29,3 +29,18 @@ export function updateFileContent(data) {
   })
 }
 
+export function createFile(data) {
+  return request({
+    url: `/file/create`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function createFolder(data) {
+  return request({
+    url: `/file/folder`,
+    method: 'post',
+    data: data
+  })
+}
