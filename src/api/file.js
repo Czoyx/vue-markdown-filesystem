@@ -51,3 +51,18 @@ export function deleteFile(id) {
     method: 'delete'
   })
 }
+
+export function getFileInfo(id) {
+  return request({
+    url: `/file/info/${id}`,
+    method: 'get'
+  })
+}
+
+export function rename(data) {
+  return request({
+    url: `/file/rename`,
+    method: 'post',
+    data: data
+  })
+}
