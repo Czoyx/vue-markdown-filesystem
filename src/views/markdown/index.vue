@@ -3,9 +3,10 @@
     <div class="left-side-bar">
       <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
       <SideBar2 />
-      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
     <div class="md-content">
+      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
+      <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
       <el-card
         class="box-card"
         shadow="never"
@@ -48,6 +49,7 @@
     </div>
     <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
     <Share :id="currentParentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
+    <MoveFile :id="currentParentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -60,10 +62,11 @@ import SideBar2 from '@/views/markdown/SideBar2.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
 import CreateDialog from '@/views/markdown/CreateDialog.vue'
 import Share from '@/views/markdown/Share.vue'
+import MoveFile from '@/views/markdown/MoveFile.vue'
 
 export default {
   name: 'TopicPost',
-  components: { Share, CreateDialog, SideBar, SideBar2 },
+  components: { MoveFile, Share, CreateDialog, SideBar, SideBar2 },
 
   data() {
     return {
@@ -86,6 +89,7 @@ export default {
       },
       createDialogVisible: false,
       shareDialogVisible: false,
+      moveFileDialogVisible: false,
       createType: 'file', // 新建类型,文件夹或文件
       currentParentId: ''
     }
