@@ -17,10 +17,11 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="createFile">新建文件</el-dropdown-item>
-          <el-dropdown-item command="createFolder">新建文件夹</el-dropdown-item>
-          <el-dropdown-item command="delete">删除</el-dropdown-item>
-          <el-dropdown-item command="rename">重命名</el-dropdown-item>
+          <el-dropdown-item v-if="nodeData.permissions.manage&&!nodeData.isLeaf" command="createFile">新建文件</el-dropdown-item>
+          <el-dropdown-item v-if="nodeData.permissions.manage&&!nodeData.isLeaf" command="createFolder">新建文件夹</el-dropdown-item>
+          <el-dropdown-item v-if="nodeData.permissions.manage" command="share">分享</el-dropdown-item>
+          <el-dropdown-item v-if="nodeData.permissions.manage" command="delete">删除</el-dropdown-item>
+          <el-dropdown-item v-if="nodeData.permissions.wirte" command="rename">重命名</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </span>
