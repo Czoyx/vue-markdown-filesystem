@@ -33,7 +33,7 @@
             </el-form-item>
 
             <!--Markdown-->
-            <div id="vditor" />
+            <div id="vditor" class="vditor" />
 
             <el-form-item>
               <el-button
@@ -183,6 +183,7 @@ export default {
     closeDialog() {
       this.createDialogVisible = false
       this.shareDialogVisible = false
+      this.moveFileDialogVisible = false
     }
   }
 }
@@ -191,7 +192,7 @@ export default {
 <style scoped lang="less">
 .md-container{
   display: flex;
-  height: 100%;
+  height: 100vh;
   .left-side-bar{
     width: 250px;
     height: 100%;
