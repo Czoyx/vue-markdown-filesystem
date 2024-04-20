@@ -46,6 +46,7 @@
       </el-card>
     </div>
     <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
+    <Share @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -57,10 +58,11 @@ import SideBar from '@/views/markdown/SideBar.vue'
 import SideBar2 from '@/views/markdown/SideBar2.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
 import CreateDialog from '@/views/markdown/CreateDialog.vue'
+import Share from '@/views/markdown/Share.vue'
 
 export default {
   name: 'TopicPost',
-  components: { CreateDialog, SideBar, SideBar2 },
+  components: { Share, CreateDialog, SideBar, SideBar2 },
 
   data() {
     return {

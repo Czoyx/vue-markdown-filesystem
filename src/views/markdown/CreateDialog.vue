@@ -37,7 +37,6 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
       form: { id: '', name: '' }
     }
   },
