@@ -9,7 +9,6 @@
       node-key="id"
       @node-contextmenu="handleContextMenu"
       @node-expand="handleNodeExpand"
-      @current-change="handleNodeExpand"
     />
   </div>
 </template>
