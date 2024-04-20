@@ -11,53 +11,22 @@
       @current-change="handleNodeClick"
     >
       <span slot-scope="{ node, data }" class="custom-tree-node">
-        <span>{{ node.label }}</span>
-        <span>
-          <el-button
-            type="text"
-            size="mini"
-            @click="() => createFolderOrFile(data,'file')"
-          >
-            新建
-          </el-button>
-          <el-button
-            type="text"
-            size="mini"
-            @click="() => deleteFolderOrFile(data)"
-          >
-            删除
-          </el-button>
-        </span>
+        <TreeItem
+          :node="node"
+          :node-data="data"
+          @append="(child) => append(data,child)"
+        />
       </span>
     </el-tree>
-    <!--    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">-->
-    <!--      <el-radio-button :label="false">展开</el-radio-button>-->
-    <!--      <el-radio-button :label="true">收起</el-radio-button>-->
-    <!--    </el-radio-group>-->
-    <!--    <el-menu default-active="1-4-1" class="el-menu-vertical-demo" :collapse="isCollapse" @open="handleOpen" @close="handleClose">-->
-    <!--      <el-submenu index="1">-->
-    <!--        <template slot="title">-->
-    <!--          <i class="el-icon-location" />-->
-    <!--          <span slot="title">导航一</span>-->
-    <!--        </template>-->
-    <!--        <el-menu-item-group>-->
-    <!--          <span slot="title">分组一</span>-->
-    <!--          <el-menu-item index="1-1">选项1</el-menu-item>-->
-    <!--          <el-menu-item index="1-2">选项2</el-menu-item>-->
-    <!--        </el-menu-item-group>-->
-    <!--        <el-menu-item-group title="分组2">-->
-    <!--          <el-menu-item index="1-3">选项3</el-menu-item>-->
-    <!--        </el-menu-item-group>-->
-    <!--      </el-submenu>-->
-
-    <!--    </el-menu>-->
   </div>
 </template>
 
 <script>
-import { deleteFile, getFileList, getFileListById } from '@/api/file'
+import { getFileList, getFileListById } from '@/api/file'
+import TreeItem from '@/views/markdown/TreeItem.vue'
 
 export default {
+  components: { TreeItem },
   data() {
     return {
       props: {
@@ -88,6 +57,12 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath)
+    },
+    append(data, newChild) {
+      if (!this.nodeData.children) {
+        this.$set(this.nodeData, 'children', [])
+      }
+      this.nodeData.children.push(newChild)
     },
     handleNodeClick(node) {
       console.log('side1', this.$refs.tree.getNode())
@@ -126,10 +101,8 @@ export default {
           const fileList = data.map((obj) => {
             if (obj.type === 0) {
               obj.leaf = true
-              return obj
-            } else {
-              return obj
             }
+            return obj
           })
           console.log('fileList', fileList)
           if (fileList.length > 0) {
@@ -149,13 +122,6 @@ export default {
         this.$emit('create-file', node.id)
       } else {
         this.$emit('create-folder', node.id)
-      }
-    },
-    deleteFolderOrFile(node) {
-      const res = deleteFile(node.id)
-      const { code, data, msg } = res
-      if (code === 200) {
-        this.$message.success('删除成功')
       }
     }
   }
