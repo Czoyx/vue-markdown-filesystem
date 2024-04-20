@@ -85,7 +85,13 @@ export default {
           id: data,
           name: submitData.file_name,
           isLeaf: type === 'file', // 如果type为0，则为文件，没有子节点
-          children: null
+          children: null,
+          permissions: {
+            read: true,
+            write: true,
+            manage: true
+
+          }
         }})
       }
     },
