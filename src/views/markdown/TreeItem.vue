@@ -17,11 +17,11 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-if="nodeData.permissions.manage&&!nodeData.isLeaf" command="createFile">新建文件</el-dropdown-item>
-          <el-dropdown-item v-if="nodeData.permissions.manage&&!nodeData.isLeaf" command="createFolder">新建文件夹</el-dropdown-item>
-          <el-dropdown-item v-if="nodeData.permissions.manage" command="share">分享</el-dropdown-item>
-          <el-dropdown-item v-if="nodeData.permissions.manage" command="delete">删除</el-dropdown-item>
-          <el-dropdown-item v-if="nodeData.permissions.wirte" command="rename">重命名</el-dropdown-item>
+          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFile" :disabled="!nodeData.permissions.manage">新建文件</el-dropdown-item>
+          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFolder" :disabled="!nodeData.permissions.manage">新建文件夹</el-dropdown-item>
+          <el-dropdown-item command="share" :disabled="!nodeData.permissions.manage">分享</el-dropdown-item>
+          <el-dropdown-item command="delete" :disabled="!nodeData.permissions.manage">删除</el-dropdown-item>
+          <el-dropdown-item command="rename" :disabled="!nodeData.permissions.write">重命名</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </span>
@@ -53,45 +53,25 @@ export default {
     }
   },
   methods: {
-    handleCommand(command) {
+    async handleCommand(command) {
       this.$message('click on item ' + command)
       switch (command) {
         case 'createFile':
-          this.create('file')
+          await this.create('file')
           break
         case 'createFolder':
-          this.create('folder')
+          await this.create('folder')
           break
         case 'delete':
-          this.delete()
+          await this.delete()
           break
         case 'rename':
           this.startRenameFile()
           break
       }
     },
-    handleClose() {
-      this.$emit('close-dialog')
-    },
-    append(parentid, newChild) {
-      const childNodes = [newChild]
-      for (const child of this.nodeData.children) {
-        if (child.id !== '') {
-          childNodes.push(child)
-        }
-      }
-      Vue.set(this.nodeData, 'children', childNodes)
-    },
-    deleteChild(id) {
-      const childNodes = []
-      for (const child of this.nodeData.children) {
-        if (child.id !== id) {
-          childNodes.push(child)
-        }
-      }
-      Vue.set(this.nodeData, 'children', childNodes)
-    },
     async create(type) {
+      console.log(this.nodeData.id)
       const submitData = {
         content: '',
         file_name: '未命名' + (type === 'file' ? '文件' : '文件夹'),
@@ -101,14 +81,13 @@ export default {
       const { code, data } = res
       if (code === 200) {
         this.$message.success('创建成功!')
-        this.$emit('finish-create', data)
+        this.$store.dispatch('menu/appendAt', { nodeId: this.nodeData.id, newChild: {
+          id: data,
+          name: submitData.file_name,
+          isLeaf: type === 'file', // 如果type为0，则为文件，没有子节点
+          children: null
+        }})
       }
-      this.$store.dispatch('menu/appendAt', { nodeId: this.nodeData.id, newChild: {
-        id: data,
-        name: submitData.file_name,
-        isLeaf: type === 'file', // 如果type为0，则为文件，没有子节点
-        children: null
-      }})
     },
     async delete() {
       const id = this.nodeData.id
