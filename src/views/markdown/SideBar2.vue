@@ -9,6 +9,7 @@
       node-key="id"
       @node-contextmenu="handleContextMenu"
       @node-expand="handleNodeExpand"
+      @current-change="handleNodeClick"
     >
       <span slot-scope="{ node, data }" class="custom-tree-node">
         <TreeItem
@@ -26,6 +27,9 @@ import TreeItem from '@/views/markdown/TreeItem.vue'
 
 export default {
   components: { TreeItem },
+  props: {
+    currentId: String
+  },
   computed: {
     treeData() {
       console.log('side', this.$store.state.menu.treeData)
@@ -52,6 +56,14 @@ export default {
     handleContextMenu(event, data, node, component) {
       event.preventDefault()
       // 你的右键菜单处理逻辑
+    },
+    handleNodeClick(node) {
+      if (node.isLeaf) {
+        if (node.id) {
+          this.$emit('change-markdown', node.id, node.name)
+          console.log(node)
+        }
+      }
     }
   }
 }

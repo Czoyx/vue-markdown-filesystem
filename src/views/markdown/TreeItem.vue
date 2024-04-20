@@ -54,7 +54,6 @@ export default {
   },
   methods: {
     async handleCommand(command) {
-      this.$message('click on item ' + command)
       switch (command) {
         case 'createFile':
           await this.create('file')
