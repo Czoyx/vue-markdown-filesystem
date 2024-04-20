@@ -6,47 +6,25 @@
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
     <div class="md-content">
-      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
-      <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
       <el-card
         class="box-card"
         shadow="never"
       >
-        <div
-          slot="header"
-          class="clearfix"
-        >
-          <span><i class="fa fa fa-book"> 主题 / 发布主题</i></span>
-        </div>
-        <div>
-          <el-form
-            ref="ruleForm"
-            :model="ruleForm"
-            :rules="rules"
-            class="demo-ruleForm"
-          >
-            <el-form-item prop="title">
-              <el-input
-                v-model="ruleForm.title"
-                placeholder="输入标题"
-                :disabled="true"
-              />
-            </el-form-item>
-
-            <!--Markdown-->
-            <div id="vditor" />
-
-            <el-form-item>
-              <el-button
-                type="primary"
-                @click="submitForm('ruleForm')"
-              >立即创建
-              </el-button>
-              <el-button @click="resetForm('ruleForm')">重置</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
+        <el-card class="title"><i class="fa fa fa-book">{{ ruleForm.title }} </i></el-card>
+        <el-card>
+          <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
+          <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
+          <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+        </el-card>
       </el-card>
+
+      <div
+        slot="header"
+        class="clearfix"
+      />
+      <div>
+        <div id="vditor" />
+      </div>
     </div>
     <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
     <Share :id="currentParentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
@@ -56,6 +34,7 @@
 
 <script>
 // import { post } from '@/api/post'
+// at.alicdn.com/t/c/font_4516165_6yp6n203kcu.css
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
@@ -97,7 +76,9 @@ export default {
   },
   mounted() {
     this.contentEditor = new Vditor('vditor', {
-      height: 500,
+      'height': '100%',
+      'width': '100%',
+      minHeight: document.documentElement.scrollHeight - 200,
       placeholder: '此处为话题内容……',
       theme: 'classic',
       counter: {
@@ -183,7 +164,6 @@ export default {
 <style scoped lang="less">
 .md-container{
   display: flex;
-  height: 100%;
   .left-side-bar{
     width: 250px;
     height: 100%;
@@ -192,12 +172,11 @@ export default {
   }
   .md-content{
     margin-left: 250px; /* Same as sidebar width */
+    height: 100%;
     flex-grow: 1;
-    padding: 20px;
     overflow-y: auto;
     height: 100%;
     background-color: #fff;
   }
-
 }
 </style>

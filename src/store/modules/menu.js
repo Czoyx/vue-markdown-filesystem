@@ -90,7 +90,12 @@ function transformData(item) {
     name: item.name,
     isLeaf: item.type === 0, // 如果type为0，则为文件，没有子节点
     children: item.type === 0 ? null : [{ name: '此文件夹为空', leaf: true }],
-    permissions: item.permissions
+    permissions: item.permissions,
+    type: item.type,
+    creatorId: item.creator,
+    path: item.path,
+    created_at: item.created_at,
+    updated_at: item.updated_at
   }
 }
 

@@ -1,5 +1,7 @@
 <template>
   <span>
+    <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
+    <i v-if="nodeData.type===0" class="icon iconfont icon-shiyongwendang" />
     <span v-if="isEditor">
       <el-input
         v-model="nodeData.name"
@@ -17,11 +19,26 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFile" :disabled="!nodeData.permissions.manage">新建文件</el-dropdown-item>
-          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFolder" :disabled="!nodeData.permissions.manage">新建文件夹</el-dropdown-item>
-          <el-dropdown-item command="share" :disabled="!nodeData.permissions.manage">分享</el-dropdown-item>
-          <el-dropdown-item command="delete" :disabled="!nodeData.permissions.manage">删除</el-dropdown-item>
-          <el-dropdown-item command="rename" :disabled="!nodeData.permissions.write">重命名</el-dropdown-item>
+          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFile" :disabled="!nodeData.permissions.manage">
+            <i class="icon iconfont icon-xinjian" />
+            新建文件
+          </el-dropdown-item>
+          <el-dropdown-item v-if="!nodeData.isLeaf" command="createFolder" :disabled="!nodeData.permissions.manage">
+            <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
+            新建文件夹
+          </el-dropdown-item>
+          <el-dropdown-item command="share" :disabled="!nodeData.permissions.manage">
+            <i v-if="nodeData.type===1" class="icon iconfont icon-fenxiang_2" />
+            分享
+          </el-dropdown-item>
+          <el-dropdown-item command="delete" :disabled="!nodeData.permissions.manage">
+            <i v-if="nodeData.type===1" class="icon iconfont icon-shanchu" />
+            删除
+          </el-dropdown-item>
+          <el-dropdown-item command="rename" :disabled="!nodeData.permissions.write">
+            <i v-if="nodeData.type===1" class="icon iconfont icon-zhongmingming" />
+            重命名
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </span>
@@ -76,6 +93,7 @@ export default {
         file_name: '未命名' + (type === 'file' ? '文件' : '文件夹'),
         parent_id: this.nodeData.id
       }
+      submitData.file_name = submitData.file_name + end
       const res = type === 'file' ? await createFile(submitData) : await createFolder(submitData)
       const { code, data } = res
       if (code === 200) {
@@ -84,13 +102,13 @@ export default {
           id: data,
           name: submitData.file_name,
           isLeaf: type === 'file', // 如果type为0，则为文件，没有子节点
-          children: null,
+          children: [{}],
           permissions: {
             read: true,
             write: true,
             manage: true
-
-          }
+          },
+          type: type === 'file' ? 0 : 1
         }})
       }
     },
@@ -123,5 +141,8 @@ export default {
 
 </script>
 <style scoped lang="scss">
+.el-dropdown-link{
+  margin-right: 10px;
+}
 
 </style>
