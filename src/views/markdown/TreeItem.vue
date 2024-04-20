@@ -17,7 +17,7 @@
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-if="nodeData.permission." command="createFile">新建文件</el-dropdown-item>
+          <el-dropdown-item command="createFile">新建文件</el-dropdown-item>
           <el-dropdown-item command="createFolder">新建文件夹</el-dropdown-item>
           <el-dropdown-item command="delete">删除</el-dropdown-item>
           <el-dropdown-item command="rename">重命名</el-dropdown-item>
