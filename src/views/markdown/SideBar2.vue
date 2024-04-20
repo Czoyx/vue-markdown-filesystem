@@ -2,20 +2,30 @@
   <div id="app" class="container">
     <el-tree
       ref="tree"
-      :data="treeData"
+      :data="this.$store.state.menu.treeData"
       :props="defaultProps"
       :expand-on-click-node="false"
       class="filter-tree"
       node-key="id"
       @node-contextmenu="handleContextMenu"
       @node-expand="handleNodeExpand"
-    />
+    >
+      <span slot-scope="{ node, data }" class="custom-tree-node">
+        <TreeItem
+          :node="node"
+          :node-data="data"
+        />
+      </span>
+    </el-tree>
   </div>
 </template>
 
 <script>
 
+import TreeItem from '@/views/markdown/TreeItem.vue'
+
 export default {
+  components: { TreeItem },
   computed: {
     treeData() {
       console.log('side', this.$store.state.menu.treeData)

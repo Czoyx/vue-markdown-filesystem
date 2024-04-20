@@ -11,9 +11,9 @@ const mutations = {
     state.treeData = data
   },
   ADD_CHILDREN_TO_NODE: (state, { nodeId, children }) => {
-    const node = findNode(state.treeData, nodeId)
-    if (node) {
-      Vue.set(node, 'children', children) // 使用Vue.set确保响应性
+    const nodeData = findNodeData(state.treeData, nodeId)
+    if (nodeData) {
+      Vue.set(nodeData, 'children', children) // 使用Vue.set确保响应性
       console.log(state.treeData)
     }
   }
@@ -50,19 +50,48 @@ const actions = {
         }
       }
     })
+  },
+  appendAt({ commit }, { nodeId, newChild }) {
+    const nodeData = findNodeData(state.treeData, nodeId)
+    const childNodes = [newChild]
+    for (const child of nodeData.children) {
+      if (child.id !== '') {
+        childNodes.push(child)
+      }
+    }
+    Vue.set(nodeData, 'children', childNodes)
+  },
+  deleteNode({ commit }, nodeId) {
+    deleteNodeData(state.treeData, nodeId)
   }
 }
 
 // 辅助函数用于寻找特定ID的节点
-function findNode(data, id) {
+function findNodeData(data, id) {
   for (const item of data) {
     if (item.id === id) return item
     if (item.children) {
-      const result = findNode(item.children, id)
+      const result = findNodeData(item.children, id)
       if (result) return result
     }
   }
   return null
+}
+
+// 辅助函数用于寻找特定ID的节点
+function deleteNodeData(data, id) {
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i]
+    if (item.id === id) {
+      Vue.delete(data, i)
+      return
+    }
+    if (item.children) {
+      deleteNodeData(item.children, id)
+      return
+    }
+  }
+  return
 }
 
 export default {
