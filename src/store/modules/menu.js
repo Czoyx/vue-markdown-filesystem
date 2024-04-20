@@ -23,12 +23,7 @@ const actions = {
   fetchTreeData({ commit }, nodeId = 'undefined') {
     getFileListById(nodeId).then(response => {
       if (response.code === 200) {
-        const childNodes = response.data.map(item => ({
-          id: item.id,
-          name: item.name,
-          isLeaf: item.type === 0, // 如果type为0，则为文件，没有子节点
-          children: item.type === 0 ? null : [{ name: '此文件夹为空', leaf: true, parentId: nodeId }]
-        }))
+        const childNodes = response.data.map(transformData)
         commit('SET_TREE_DATA', childNodes)
       }
     })
@@ -40,12 +35,7 @@ const actions = {
           // 当没有子节点时，可以选择不添加任何节点或添加一个表示空的节点
           commit('ADD_CHILDREN_TO_NODE', { nodeId, children: [{ name: '此文件夹为空', id: `empty-${nodeId}`, isLeaf: true }] })
         } else {
-          const childNodes = response.data.map(item => ({
-            id: item.id,
-            name: item.name,
-            isLeaf: item.type === 0, // 如果type为0，则为文件，没有子节点
-            children: item.type === 0 ? null : [{ name: '此文件夹为空', leaf: true, parentId: nodeId }]
-          }))
+          const childNodes = response.data.map(transformData)
           commit('ADD_CHILDREN_TO_NODE', { nodeId, children: childNodes })
         }
       }
@@ -84,14 +74,24 @@ function deleteNodeData(data, id) {
     const item = data[i]
     if (item.id === id) {
       Vue.delete(data, i)
-      return
+      return true
     }
     if (item.children) {
-      deleteNodeData(item.children, id)
-      return
+      const re = deleteNodeData(item.children, id)
+      if (re) return re
     }
   }
-  return
+  return false
+}
+
+function transformData(item) {
+  return {
+    id: item.id,
+    name: item.name,
+    isLeaf: item.type === 0, // 如果type为0，则为文件，没有子节点
+    children: item.type === 0 ? null : [{ name: '此文件夹为空', leaf: true }],
+    permissions: item.permissions
+  }
 }
 
 export default {
