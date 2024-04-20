@@ -34,7 +34,6 @@
 
 <script>
 // import { post } from '@/api/post'
-// at.alicdn.com/t/c/font_4516165_6yp6n203kcu.css
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
@@ -156,6 +155,7 @@ export default {
     closeDialog() {
       this.createDialogVisible = false
       this.shareDialogVisible = false
+      this.moveFileDialogVisible = false
     }
   }
 }
