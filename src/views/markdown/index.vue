@@ -2,7 +2,8 @@
   <div class="md-container">
     <div class="left-side-bar">
       <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
-      <SideBar2 />
+      <SideBar2 @change-markdown="changeMarkdown" />
+      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
     <div class="md-content">
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
@@ -78,7 +79,7 @@ export default {
       },
       rules: {
         title: [
-          { required: true, message: '请输入话题名称', trigger: 'blur' },
+          { message: '请输入话题名称', trigger: 'blur' },
           {
             min: 1,
             max: 25,
@@ -142,15 +143,6 @@ export default {
           if (code === 200) {
             this.$message.success(msg)
           }
-          // post(this.ruleForm).then((response) => {
-          //   const { data } = response
-          //   setTimeout(() => {
-          //     this.$router.push({
-          //       name: 'post-detail',
-          //       params: { id: data.id }
-          //     })
-          //   }, 800)
-          // })
         } else {
           console.log('error submit!!')
           return false
