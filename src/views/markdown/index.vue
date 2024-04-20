@@ -3,6 +3,7 @@
     <div class="left-side-bar">
       <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
       <SideBar2 />
+      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
     <div class="md-content">
       <el-card
@@ -46,7 +47,7 @@
       </el-card>
     </div>
     <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
-    <Share @close-dialog="closeDialog" />
+    <Share :id="currentParentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -84,6 +85,7 @@ export default {
         ]
       },
       createDialogVisible: false,
+      shareDialogVisible: false,
       createType: 'file', // 新建类型,文件夹或文件
       currentParentId: ''
     }
@@ -176,6 +178,7 @@ export default {
     },
     closeDialog() {
       this.createDialogVisible = false
+      this.shareDialogVisible = false
     }
   }
 }
