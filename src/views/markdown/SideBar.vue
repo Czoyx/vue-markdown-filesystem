@@ -9,15 +9,7 @@
       node-key="id"
       lazy
       @current-change="handleNodeClick"
-    >
-      <span slot-scope="{ node, data }" class="custom-tree-node">
-        <TreeItem
-          :node="node"
-          :node-data="data"
-          @append="(child) => append(data,child)"
-        />
-      </span>
-    </el-tree>
+    />
   </div>
 </template>
 

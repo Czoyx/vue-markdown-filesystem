@@ -1,7 +1,7 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar">
-      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />
+      <!--      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />-->
       <SideBar2 @change-markdown="changeMarkdown" />
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
@@ -129,11 +129,6 @@ export default {
         }
       })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-      this.contentEditor.setValue('')
-      this.ruleForm.tags = ''
-    },
     async changeMarkdown(id, name) {
       this.ruleForm.title = name
       this.currentContentId = id
@@ -144,13 +139,6 @@ export default {
       } else {
         this.$message.error(msg)
       }
-    },
-    createFile(id, type) {
-      this.currentParentId = id
-      if (type === 'folder') {
-        this.createType = 'folder'
-      }
-      this.createDialogVisible = true
     },
     closeDialog() {
       this.createDialogVisible = false
