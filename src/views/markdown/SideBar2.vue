@@ -70,14 +70,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .container{
   margin-top: 50px;
+
 }
 
-el-tree{
+::v-deep .el-tree {
   max-width: 100%;
-
+  background-color: #f4f4f4;
+  .el-tree-node__content:hover{
+    background-color: #e0e0e0; /* 修改为你想要的颜色 */
+    color: #1e7ffd; /* 修改文字颜色 */
+  }
 }
 
 .custom-tree-node {

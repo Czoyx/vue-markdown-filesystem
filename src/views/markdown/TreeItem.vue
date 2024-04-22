@@ -142,16 +142,15 @@ export default {
 }
 
 </script>
-<style scoped lang="scss">
+<style scoped lang="less">
 
 .tree-item {
-  flex: 1;
-  width: 100%;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
-
-  margin-right: 8px;
+  flex-wrap: nowrap;
+  padding-right: 10px;
   .file-icon {
     flex: 1;
     margin-right: 10px; /* 调整图标与标题之间的间距 */
