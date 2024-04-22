@@ -4,32 +4,25 @@
       <SideBar2 @change-markdown="changeMarkdown" />
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
-    <el-col class="md-content">
-      <el-card
-        class="box-card"
-        shadow="never"
-      >
+    <div class="right-content">
+      <navbar />
+      <div class="md-content">
         <div class="title-bar">
           <div class="title">
             <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
           </div>
           <div class="tool">
-            <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
-            <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
-            <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+            <el-button type="primary" size="mini" @click="shareDialogVisible=true">分享</el-button>
+            <el-button type="primary" size="mini" @click="moveFileDialogVisible=true">move</el-button>
+            <el-button type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
           </div>
         </div>
 
-      </el-card>
-
-      <div
-        slot="header"
-        class="clearfix"
-      />
-      <div>
-        <div id="vditor" />
+        <div>
+          <div id="vditor" />
+        </div>
       </div>
-    </el-col>
+    </div>
 
     <Share :id="currentContentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
     <MoveFile :id="currentContentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
@@ -44,10 +37,11 @@ import SideBar2 from '@/views/markdown/SideBar2.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
 import Share from '@/views/markdown/Share.vue'
 import MoveFile from '@/views/markdown/MoveFile.vue'
+import { Navbar } from '@/layout/components'
 
 export default {
   name: 'TopicPost',
-  components: { MoveFile, Share, SideBar2 },
+  components: { Navbar, MoveFile, Share, SideBar2 },
 
   data() {
     return {
@@ -141,26 +135,6 @@ export default {
 
 <style scoped lang="less">
 
-.title-bar{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .title{
-    font-weight: bolder;
-    font-size: 1.5rem;
-    margin-left: 0;
-    order: 1;
-    white-space: nowrap; /* 防止标题换行 */
-    overflow: hidden; /* 超出部分隐藏 */
-    text-overflow: ellipsis; /* 显示省略号 */
-  }
-
-  .tool{
-    margin-right: 0;
-    order: 2;
-  }
-}
-
 .md-container{
   display: flex;
   .left-side-bar{
@@ -169,13 +143,37 @@ export default {
     background-color: #f4f4f4;
     position: fixed;
   }
-  .md-content{
+  .right-content{
     margin-left: 250px; /* Same as sidebar width */
     height: 100%;
     flex-grow: 1;
     overflow-y: auto;
     background-color: #fff;
+    .md-content{
+      margin: 20px;
+      display: flex;
+      flex-direction: column;
+      .title-bar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        margin-bottom: 10px;
+        .title{
+          font-weight: bolder;
+          font-size: 1.5rem;
+          white-space: nowrap; /* 防止标题换行 */
+          overflow: hidden; /* 超出部分隐藏 */
+          text-overflow: ellipsis; /* 显示省略号 */
+        }
+        .tool{
+          display: flex;
+          flex-wrap: nowrap;
+        }
+      }
+    }
   }
+
 }
 
 .left-side-bar{
