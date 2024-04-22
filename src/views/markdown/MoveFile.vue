@@ -17,7 +17,7 @@
   </el-dialog>
 </template>
 <script >
-import { getFileListById } from '@/api/file'
+import { getFileListById, operateFile } from '@/api/file'
 
 export default {
   props: {
@@ -75,18 +75,24 @@ export default {
       this.$emit('close-dialog')
     },
     async submit() {
-      const submitData = {
-        id: this.id,
-        location: this.form.location
-      }
+      // console.log(this.form.id)
       console.log(this.form.location)
-      // const res = this.createType === 'file' ? await createFile(submitData) : await createFolder(submitData)
-      // const { code, data, msg } = res
-      // if (code === 200) {
-      //   this.$message.success('创建成功!')
-      //   this.form.name = ''
-      //   this.handleClose()
-      // }
+      console.log(this.form.location.length)
+      const parent_id = this.form.location[this.form.location.length - 1]
+      const submitData = {
+        file_id: this.id,
+        operate: 'move',
+        parent_id: parent_id
+      }
+      const res = await operateFile(submitData)
+      const { code, data } = res
+      if (code === 200) {
+        this.$message.success('移动成功')
+        this.$store.dispatch('menu/moveNode', {
+          nodeId: this.nodeData.id,
+          parentID: this.nodeData.parent_id
+        })
+      }
     }
   }
 }

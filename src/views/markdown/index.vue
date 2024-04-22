@@ -1,7 +1,6 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar">
-      <!--      <SideBar @change-markdown="changeMarkdown" @create-file="createFile" />-->
       <SideBar2 @change-markdown="changeMarkdown" />
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
@@ -32,9 +31,8 @@
       </div>
     </el-col>
 
-    <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
-    <Share :id="currentParentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
-    <MoveFile :id="currentParentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
+    <Share :id="currentContentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
+    <MoveFile :id="currentContentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -42,16 +40,14 @@
 // import { post } from '@/api/post'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import SideBar from '@/views/markdown/SideBar.vue'
 import SideBar2 from '@/views/markdown/SideBar2.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
-import CreateDialog from '@/views/markdown/CreateDialog.vue'
 import Share from '@/views/markdown/Share.vue'
 import MoveFile from '@/views/markdown/MoveFile.vue'
 
 export default {
   name: 'TopicPost',
-  components: { MoveFile, Share, CreateDialog, SideBar, SideBar2 },
+  components: { MoveFile, Share, SideBar2 },
 
   data() {
     return {

@@ -66,3 +66,11 @@ export function rename(data) {
     data: data
   })
 }
+
+export function operateFile(data) {
+  return request({
+    url: `/file/operate`,
+    method: 'post',
+    data: data
+  })
+}

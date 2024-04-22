@@ -53,6 +53,20 @@ const actions = {
   },
   deleteNode({ commit }, nodeId) {
     deleteNodeData(state.treeData, nodeId)
+  },
+  moveNode({ commit }, { nodeId, parentID }) {
+    const nodeData = findNodeData(state.treeData, nodeId)
+    deleteNodeData(state.treeData, nodeId)
+    const pNodeData = findNodeData(state.treeData, parentID)
+    if (pNodeData.children.length !== 0) {
+      const childNodes = [nodeData]
+      for (const child of pNodeData.children) {
+        if (child.id !== '') {
+          childNodes.push(child)
+        }
+      }
+      Vue.set(pNodeData, 'children', childNodes)
+    }
   }
 }
 
