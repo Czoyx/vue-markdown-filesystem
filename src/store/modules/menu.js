@@ -3,7 +3,7 @@ import { getFileListById } from '@/api/file'
 import Vue from 'vue' // 确保这里路径正确
 
 const state = {
-  treeData: [{ name: '根目录', id: 'undefined', isLeaf: false }]
+  treeData: [{ name: '根目录', id: 'undefined', isLeaf: false, type: 1 }]
 }
 
 const mutations = {
@@ -20,26 +20,21 @@ const mutations = {
 }
 
 const actions = {
-  fetchTreeData({ commit }, nodeId = 'undefined') {
-    getFileListById(nodeId).then(response => {
-      if (response.code === 200) {
-        const childNodes = response.data.map(transformData)
-        commit('SET_TREE_DATA', childNodes)
-      }
-    })
+  async fetchTreeData({ commit }, nodeId = 'undefined') {
+    const response = await getFileListById(nodeId)
+    if (response.code === 200) {
+      const childNodes = response.data.map(transformData)
+      commit('SET_TREE_DATA', childNodes)
+    }
   },
-  loadChildrenForNode({ commit }, nodeId) {
-    getFileListById(nodeId).then(response => {
-      if (response.code === 200) {
-        if (response.data.length === 0) {
-          // 当没有子节点时，可以选择不添加任何节点或添加一个表示空的节点
-          commit('ADD_CHILDREN_TO_NODE', { nodeId, children: [{ name: '此文件夹为空', id: `empty-${nodeId}`, isLeaf: true }] })
-        } else {
-          const childNodes = response.data.map(transformData)
-          commit('ADD_CHILDREN_TO_NODE', { nodeId, children: childNodes })
-        }
-      }
-    })
+  async loadChildrenForNode({ commit }, nodeId) {
+    const response = await getFileListById(nodeId)
+    if (response.code === 200) {
+      const children = response.data.length > 0
+        ? response.data.map(transformData)
+        : [{ name: '此文件夹为空', id: `empty-${nodeId}`, isLeaf: true }]
+      commit('ADD_CHILDREN_TO_NODE', { nodeId, children })
+    }
   },
   appendAt({ commit }, { nodeId, newChild }) {
     const nodeData = findNodeData(state.treeData, nodeId)
@@ -79,7 +74,7 @@ function findNodeData(data, id) {
       if (result) return result
     }
   }
-  return null
+  return findNodeData(data, 'undefined')
 }
 
 // 辅助函数用于寻找特定ID的节点

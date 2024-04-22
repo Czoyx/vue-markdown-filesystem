@@ -44,11 +44,12 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('menu/fetchTreeData')
+    const foldId = this.$route.query.foldId || 'undefined'
+    this.$store.dispatch('menu/loadChildrenForNode', foldId)
   },
   methods: {
     handleNodeExpand(node, nodeComponent) {
-      if (!node.isLeaf) {
+      if (!node.isLeaf && node.id !== 'undefined') {
         // 如果节点没有子节点数据，触发加载
         this.$store.dispatch('menu/loadChildrenForNode', node.id)
       }
