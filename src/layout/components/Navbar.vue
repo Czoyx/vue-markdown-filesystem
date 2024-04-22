@@ -47,6 +47,7 @@ export default {
   },
   methods: {
     toggleSideBar() {
+      this.$emit('toggleSidebar')
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {

@@ -1,11 +1,10 @@
 <template>
   <div class="md-container">
-    <div class="left-side-bar">
+    <div class="left-side-bar" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
       <SideBar2 @change-markdown="changeMarkdown" />
-      <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
-    <div class="right-content">
-      <navbar />
+    <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
+      <navbar @toggleSidebar="toggleSidebar" />
       <div class="md-content">
         <div class="title-bar">
           <div class="title">
@@ -66,7 +65,8 @@ export default {
       shareDialogVisible: false,
       moveFileDialogVisible: false,
       createType: 'file', // 新建类型,文件夹或文件
-      currentParentId: ''
+      currentParentId: '',
+      isSidebarOpen: true
     }
   },
   mounted() {
@@ -128,31 +128,49 @@ export default {
       this.createDialogVisible = false
       this.shareDialogVisible = false
       this.moveFileDialogVisible = false
+    },
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+@sidebar-width: 250px;
+@transition-speed: 0.3s;
 
 .md-container{
   display: flex;
   .left-side-bar{
-    width: 250px;
+    width: @sidebar-width;
     height: 100%;
     background-color: #f4f4f4;
     position: fixed;
+    &.open {
+      width: @sidebar-width; // 展开状态
+    }
+
+    &.closed {
+      width: 0; // 隐藏状态
+    }
   }
+
   .right-content{
-    margin-left: 250px; /* Same as sidebar width */
+    margin-left:  @sidebar-width; /* Same as sidebar width */
     height: 100%;
     flex-grow: 1;
     overflow-y: auto;
     background-color: #fff;
+    transition: margin-left @transition-speed;
+    &.closed {
+      margin-left: 0; // 当侧边栏隐藏时
+    }
     .md-content{
       margin: 20px;
       display: flex;
       flex-direction: column;
+
       .title-bar{
         display: flex;
         justify-content: space-between;
