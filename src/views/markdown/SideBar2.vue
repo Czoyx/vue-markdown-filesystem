@@ -73,4 +73,20 @@ export default {
 .container{
   margin-top: 50px;
 }
+
+el-tree{
+  max-width: 100%;
+
+}
+
+.custom-tree-node {
+  display: flex;
+  flex:1;
+  width:100%;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  overflow: hidden; /* 超出部分隐藏 */
+}
+
 </style>

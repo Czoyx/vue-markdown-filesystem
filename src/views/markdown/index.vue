@@ -5,17 +5,22 @@
       <SideBar2 @change-markdown="changeMarkdown" />
       <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
     </div>
-    <div class="md-content">
+    <el-col class="md-content">
       <el-card
         class="box-card"
         shadow="never"
       >
-        <el-card class="title"><i class="fa fa fa-book">{{ ruleForm.title }} </i></el-card>
-        <el-card>
-          <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
-          <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
-        </el-card>
+        <div class="title-bar">
+          <div class="title">
+            <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
+          </div>
+          <div class="tool">
+            <el-button type="primary" @click="shareDialogVisible=true">分享</el-button>
+            <el-button type="primary" @click="moveFileDialogVisible=true">move</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+          </div>
+        </div>
+
       </el-card>
 
       <div
@@ -25,7 +30,8 @@
       <div>
         <div id="vditor" />
       </div>
-    </div>
+    </el-col>
+
     <CreateDialog :id="currentParentId" :show="createDialogVisible" :create-type="createType" @close-dialog="closeDialog" />
     <Share :id="currentParentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
     <MoveFile :id="currentParentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
@@ -103,31 +109,19 @@ export default {
     })
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(async(valid) => {
-        if (valid) {
-          if (
-            this.contentEditor.getValue().length === 1 ||
-            this.contentEditor.getValue() == null ||
-            this.contentEditor.getValue() === ''
-          ) {
-            this.$message.warning('话题内容不可为空')
-            return false
-          }
-          const content = this.contentEditor.getValue()
-          const res = await updateFileContent({
-            'content': content,
-            'file_id': this.currentContentId
-          })
-          const { code, data, msg } = res
-          if (code === 200) {
-            this.$message.success(msg)
-          }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+    async submitForm(formName) {
+      const content = this.contentEditor.getValue()
+      const res = await updateFileContent({
+        'content': content,
+        'file_id': this.currentContentId
       })
+      const { code, data, msg } = res
+      if (code === 200) {
+        this.$message.success(msg)
+      } else {
+        console.log('error submit!!data:', data)
+        this.$message.error(msg)
+      }
     },
     async changeMarkdown(id, name) {
       this.ruleForm.title = name
@@ -150,6 +144,27 @@ export default {
 </script>
 
 <style scoped lang="less">
+
+.title-bar{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .title{
+    font-weight: bolder;
+    font-size: 1.5rem;
+    margin-left: 0;
+    order: 1;
+    white-space: nowrap; /* 防止标题换行 */
+    overflow: hidden; /* 超出部分隐藏 */
+    text-overflow: ellipsis; /* 显示省略号 */
+  }
+
+  .tool{
+    margin-right: 0;
+    order: 2;
+  }
+}
+
 .md-container{
   display: flex;
   .left-side-bar{
@@ -163,8 +178,12 @@ export default {
     height: 100%;
     flex-grow: 1;
     overflow-y: auto;
-    height: 100%;
     background-color: #fff;
   }
 }
+
+.left-side-bar{
+  width: 250px;
+}
+
 </style>

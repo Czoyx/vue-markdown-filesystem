@@ -1,21 +1,25 @@
 <template>
-  <span>
-    <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
-    <i v-if="nodeData.type===0" class="icon iconfont icon-shiyongwendang" />
-    <span v-if="isEditor">
-      <el-input
-        v-model="nodeData.name"
-        :placeholder="请输入文件名"
-        size="mini"
-        @change="renameFile"
-      />
+  <span class="tree-item">
+    <span class="file-icon">
+      <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
+      <i v-if="nodeData.type===0" class="icon iconfont icon-shiyongwendang" />
     </span>
-    <span v-else>
-      {{ nodeData.name }}
+    <span class="title">
+      <span v-if="isEditor">
+        <el-input
+          v-model="nodeData.name"
+          :placeholder="请输入文件名"
+          size="mini"
+          @change="renameFile"
+        />
+      </span>
+      <span v-else>
+        <span class="title-span">{{ nodeData.name }} </span>
+      </span>
     </span>
-    <span>
+    <span class="menuIcon">
       <el-dropdown @command="handleCommand">
-        <span class="el-dropdown-link">
+        <span class="el-dropdown-link menuIcon">
           <i class="el-icon-arrow-down el-icon--right" />
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -46,7 +50,6 @@
 </template>
 <script >
 import { createFile, createFolder, deleteFile, rename } from '@/api/file'
-import Vue from 'vue'
 
 export default {
   props: {
@@ -93,7 +96,6 @@ export default {
         file_name: '未命名' + (type === 'file' ? '文件' : '文件夹'),
         parent_id: this.nodeData.id
       }
-      submitData.file_name = submitData.file_name + end
       const res = type === 'file' ? await createFile(submitData) : await createFolder(submitData)
       const { code, data } = res
       if (code === 200) {
@@ -141,8 +143,46 @@ export default {
 
 </script>
 <style scoped lang="scss">
+
+.tree-item {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-right: 8px;
+  .file-icon {
+    flex: 1;
+    margin-right: 10px; /* 调整图标与标题之间的间距 */
+    max-width: 16px;
+  }
+  .title {
+    flex: 1; /* 填充剩余空间 */
+    white-space: nowrap; /* 防止标题换行 */
+    overflow: hidden; /* 超出部分隐藏 */
+    text-overflow: ellipsis; /* 显示省略号 */
+    .title-span{
+      flex:1
+    }
+  }
+  .menuIcon {
+    flex: 1;
+    margin-right: 8px;
+    position: relative;
+    right:0px;
+    max-width: 16px;
+   }
+}
+
 .el-dropdown-link{
   margin-right: 10px;
+}
+
+.title-span{
+  overflow: hidden; /* 当内容超出容器范围时隐藏 */
+  white-space: nowrap; /* 防止内容换行 */
+  text-overflow: ellipsis; /* 使用省略号显示溢出内容 */
 }
 
 </style>
