@@ -31,15 +31,15 @@
             <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
             新建文件夹
           </el-dropdown-item>
-          <el-dropdown-item command="share" :disabled="!nodeData.permissions.manage">
+          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="share" :disabled="!nodeData.permissions.manage">
             <i v-if="nodeData.type===1" class="icon iconfont icon-fenxiang_2" />
             分享
           </el-dropdown-item>
-          <el-dropdown-item command="delete" :disabled="!nodeData.permissions.manage">
+          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="delete" :disabled="!nodeData.permissions.manage">
             <i v-if="nodeData.type===1" class="icon iconfont icon-shanchu" />
             删除
           </el-dropdown-item>
-          <el-dropdown-item command="rename" :disabled="!nodeData.permissions.write">
+          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="rename" :disabled="!nodeData.permissions.write">
             <i v-if="nodeData.type===1" class="icon iconfont icon-zhongmingming" />
             重命名
           </el-dropdown-item>

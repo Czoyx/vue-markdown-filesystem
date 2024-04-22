@@ -60,7 +60,8 @@ const actions = {
           childNodes.push(child)
         }
       }
-      Vue.set(pNodeData, 'children', childNodes)
+      const childNodes1 = childNodes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+      Vue.set(pNodeData, 'children', childNodes1)
     }
   }
 }
@@ -74,7 +75,7 @@ function findNodeData(data, id) {
       if (result) return result
     }
   }
-  return findNodeData(data, 'undefined')
+  return null
 }
 
 // 辅助函数用于寻找特定ID的节点

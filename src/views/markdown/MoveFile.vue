@@ -89,9 +89,10 @@ export default {
       if (code === 200) {
         this.$message.success('移动成功')
         this.$store.dispatch('menu/moveNode', {
-          nodeId: this.nodeData.id,
-          parentID: this.nodeData.parent_id
+          nodeId: this.id,
+          parentID: parent_id
         })
+        this.$emit('close-dialog')
       }
     }
   }
