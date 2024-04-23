@@ -54,7 +54,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 400 || res.code === 50012 || res.code === 50014) {
+      if (res.code === 400 || res.code === 10001 || res.code === 10002 || res.code === 10003 || res.code === 10004) {
         // to re-login
         MessageBox.confirm('登录过期,请重新登录！', 'Confirm logout', {
           confirmButtonText: '确定',
