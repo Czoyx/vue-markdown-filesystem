@@ -24,6 +24,7 @@
 <script>
 
 import TreeItem from '@/views/markdown/TreeItem.vue'
+import { getFileInfo } from '@/api/file'
 
 export default {
   components: { TreeItem },
@@ -43,9 +44,18 @@ export default {
       }
     }
   },
-  created() {
-    const foldId = this.$route.query.foldId || 'undefined'
-    this.$store.dispatch('menu/loadChildrenForNode', foldId)
+  async created() {
+    const rootID = this.$route.query.fileId || 'undefined'
+    if (rootID === 'undefined') {
+      this.$store.dispatch('menu/loadChildrenForNode', rootID)
+      return
+    }
+    const res = await getFileInfo(rootID)
+    const { code, data } = res
+    if (code === 200) {
+      await this.$store.dispatch('menu/initRootNode', data)
+      await this.$store.dispatch('menu/loadChildrenForNode', rootID)
+    }
   },
   methods: {
     handleNodeExpand(node, nodeComponent) {

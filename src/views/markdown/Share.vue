@@ -9,7 +9,7 @@
       <el-form-item label="链接">
         <el-row span="24" gutter="5">
           <el-col span="18">
-            <el-input ref="input" v-model="form.url" :disabled="true" readonly />
+            <el-input ref="input" :v-model="form.url" :disabled="true" readonly />
           </el-col>
           <el-col span="4">
             <el-button ref="copyButton" type="primary" @click="copyToClipboard">复制</el-button>
@@ -47,7 +47,6 @@
   </el-dialog>
 </template>
 <script >
-import { createFile, createFolder } from '@/api/file'
 
 export default {
   props: {
@@ -63,8 +62,8 @@ export default {
   data() {
     return {
       form: {
-        id: '',
-        url: '111111',
+        id: this.id,
+        url: 'http://localhost:9528/#/markdown?fileId=',
         control: [],
         userList: []
       },
@@ -90,18 +89,11 @@ export default {
       this.$emit('close-dialog')
     },
     async submit() {
-      const submitData = {
-        content: '',
-        file_name: this.form.name,
-        parent_id: this.id
-      }
-      const res = this.createType === 'file' ? await createFile(submitData) : await createFolder(submitData)
-      const { code, data, msg } = res
-      if (code === 200) {
-        this.$message.success('创建成功!')
-        this.form.name = ''
-        this.handleClose()
-      }
+      // const submitData = {
+      //   content: '',
+      //   file_name: this.form.name,
+      //   parent_id: this.id
+      // }
     },
     copyToClipboard() {
       const textToCopy = this.$refs.input.value // 从输入框获取文本

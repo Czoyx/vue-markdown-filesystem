@@ -44,7 +44,7 @@ export default {
           if (level === 0) {
             resolve([{
               value: 'undefined',
-              label: '根目录',
+              label: '我的云文档',
               leaf: false
             }])
           } else {
@@ -64,6 +64,8 @@ export default {
               } else {
                 return resolve([])
               }
+            } else {
+              this.$message.error(msg)
             }
           }
         }
@@ -85,7 +87,7 @@ export default {
         parent_id: parent_id
       }
       const res = await operateFile(submitData)
-      const { code, data } = res
+      const { code } = res
       if (code === 200) {
         this.$message.success('移动成功')
         this.$store.dispatch('menu/moveNode', {

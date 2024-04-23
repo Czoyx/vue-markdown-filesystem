@@ -28,19 +28,19 @@
             新建文件
           </el-dropdown-item>
           <el-dropdown-item v-if="!nodeData.isLeaf" command="createFolder" :disabled="!nodeData.permissions.manage">
-            <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
+            <i class="icon iconfont icon-wenjian" />
             新建文件夹
           </el-dropdown-item>
-          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="share" :disabled="!nodeData.permissions.manage">
-            <i v-if="nodeData.type===1" class="icon iconfont icon-fenxiang_2" />
+          <el-dropdown-item v-if="!(nodeData.id==='undefined')" command="share" :disabled="!nodeData.permissions.manage">
+            <i class="icon iconfont icon-fenxiang_2" />
             分享
           </el-dropdown-item>
-          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="delete" :disabled="!nodeData.permissions.manage">
-            <i v-if="nodeData.type===1" class="icon iconfont icon-shanchu" />
+          <el-dropdown-item v-if="!nodeData.isRoot" command="delete" :disabled="!nodeData.permissions.manage">
+            <i class="icon iconfont icon-shanchu" />
             删除
           </el-dropdown-item>
-          <el-dropdown-item v-if="!nodeData.id==='undefined'" command="rename" :disabled="!nodeData.permissions.write">
-            <i v-if="nodeData.type===1" class="icon iconfont icon-zhongmingming" />
+          <el-dropdown-item v-if="!(nodeData.id==='undefined')" command="rename" :disabled="!nodeData.permissions.write">
+            <i class="icon iconfont icon-zhongmingming" />
             重命名
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -49,7 +49,7 @@
   </span>
 </template>
 <script >
-import { createFile, createFolder, deleteFile, rename } from '@/api/file'
+import { createFile, createFolder, deleteFile, getFileInfo, rename } from '@/api/file'
 
 export default {
   props: {
@@ -97,21 +97,18 @@ export default {
         parent_id: this.nodeData.id
       }
       const res = type === 'file' ? await createFile(submitData) : await createFolder(submitData)
-      const { code, data } = res
+      const { code, data, msg } = res
       if (code === 200) {
         this.$message.success('创建成功!')
-        this.$store.dispatch('menu/appendAt', { nodeId: this.nodeData.id, newChild: {
-          id: data,
-          name: submitData.file_name,
-          isLeaf: type === 'file', // 如果type为0，则为文件，没有子节点
-          children: [{}],
-          permissions: {
-            read: true,
-            write: true,
-            manage: true
-          },
-          type: type === 'file' ? 0 : 1
-        }})
+        const res1 = await getFileInfo(data)
+        const { code: code1, data: data1, msg: msg1 } = res1
+        if (code1 === 200) {
+          await this.$store.dispatch('menu/appendAt', { nodeId: this.nodeData.id, fileData: data1 })
+        } else {
+          this.$message.error(msg1)
+        }
+      } else {
+        this.$message.success(msg)
       }
     },
     async delete() {
@@ -169,7 +166,7 @@ export default {
     flex: 1;
     margin-right: 8px;
     position: relative;
-    right:0px;
+    right:0;
     max-width: 16px;
    }
 }

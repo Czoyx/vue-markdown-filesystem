@@ -1,14 +1,26 @@
 
 import { getFileListById } from '@/api/file'
-import Vue from 'vue' // 确保这里路径正确
+import Vue from 'vue'
 
 const state = {
-  treeData: [{ name: '根目录', id: 'undefined', isLeaf: false, type: 1 }]
+  treeData: [{
+    id: 'undefined',
+    name: '我的云文档',
+    isLeaf: false,
+    permissions: {
+      read: true,
+      write: true,
+      manage: true
+    },
+    type: 1,
+    isRoot: true
+  }]
 }
 
 const mutations = {
   SET_TREE_DATA: (state, data) => {
-    state.treeData = data
+    Vue.set(state, 'treeData', data)
+    // state.treeData = data
   },
   ADD_CHILDREN_TO_NODE: (state, { nodeId, children }) => {
     const nodeData = findNodeData(state.treeData, nodeId)
@@ -20,31 +32,24 @@ const mutations = {
 }
 
 const actions = {
-  async fetchTreeData({ commit }, nodeId = 'undefined') {
-    const response = await getFileListById(nodeId)
-    if (response.code === 200) {
-      const childNodes = response.data.map(transformData)
-      commit('SET_TREE_DATA', childNodes)
-    }
+  async initRootNode({ commit }, data) {
+    const nodeData = transformData(data)
+    nodeData.isRoot = true
+    const lis = [nodeData]
+    commit('SET_TREE_DATA', lis)
   },
   async loadChildrenForNode({ commit }, nodeId) {
     const response = await getFileListById(nodeId)
     if (response.code === 200) {
       const children = response.data.length > 0
         ? response.data.map(transformData)
-        : [{ name: '此文件夹为空', id: `empty-${nodeId}`, isLeaf: true }]
+        : [{ name: '此文件夹为空', id: ``, isLeaf: true }]
       commit('ADD_CHILDREN_TO_NODE', { nodeId, children })
     }
   },
-  appendAt({ commit }, { nodeId, newChild }) {
-    const nodeData = findNodeData(state.treeData, nodeId)
-    const childNodes = [newChild]
-    for (const child of nodeData.children) {
-      if (child.id !== '') {
-        childNodes.push(child)
-      }
-    }
-    Vue.set(nodeData, 'children', childNodes)
+  appendAt({ commit }, { nodeId, fileData }) {
+    const nodeData = transformData(fileData)
+    appendNodeAt(nodeId, nodeData)
   },
   deleteNode({ commit }, nodeId) {
     deleteNodeData(state.treeData, nodeId)
@@ -52,17 +57,7 @@ const actions = {
   moveNode({ commit }, { nodeId, parentID }) {
     const nodeData = findNodeData(state.treeData, nodeId)
     deleteNodeData(state.treeData, nodeId)
-    const pNodeData = findNodeData(state.treeData, parentID)
-    if (pNodeData.children.length !== 0) {
-      const childNodes = [nodeData]
-      for (const child of pNodeData.children) {
-        if (child.id !== '') {
-          childNodes.push(child)
-        }
-      }
-      const childNodes1 = childNodes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
-      Vue.set(pNodeData, 'children', childNodes1)
-    }
+    appendNodeAt(parentID, nodeData)
   }
 }
 
@@ -94,18 +89,33 @@ function deleteNodeData(data, id) {
   return false
 }
 
+function appendNodeAt(pNodeId, nodeData) {
+  const pNodeData = findNodeData(state.treeData, pNodeId)
+  if (pNodeData.children.length > 0) {
+    const childNodes = [nodeData]
+    for (const child of pNodeData.children) {
+      if (child.id !== '') {
+        childNodes.push(child)
+      }
+    }
+    childNodes.sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+    Vue.set(pNodeData, 'children', childNodes)
+  }
+}
+
 function transformData(item) {
   return {
     id: item.id,
     name: item.name,
     isLeaf: item.type === 0, // 如果type为0，则为文件，没有子节点
-    children: item.type === 0 ? null : [{ name: '此文件夹为空', leaf: true }],
+    children: item.type === 0 ? null : [{ name: '', id: '', leaf: true }],
     permissions: item.permissions,
     type: item.type,
-    creatorId: item.creator,
+    creatorId: item.creator || 0,
     path: item.path,
     created_at: item.created_at,
-    updated_at: item.updated_at
+    updated_at: item.updated_at,
+    isRoot: false
   }
 }
 
