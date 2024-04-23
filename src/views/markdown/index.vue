@@ -1,13 +1,22 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
-      <SideBar2 @change-markdown="changeMarkdown" />
+      <div class="sidebar-header">
+        <svg class="icon svg-icon" aria-hidden="true">
+          <use xlink:href="#icon-markdown1" />
+        </svg>
+        <span>Markdown</span>
+      </div>
+      <SideBar @change-markdown="changeMarkdown" />
     </div>
     <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
       <navbar @toggleSidebar="toggleSidebar" />
       <div class="md-content">
         <div class="title-bar">
           <div class="title">
+            <svg class="icon svg-icon" aria-hidden="true">
+              <use xlink:href="#icon-markdown2" />
+            </svg>
             <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
           </div>
           <div class="tool">
@@ -32,7 +41,7 @@
 // import { post } from '@/api/post'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import SideBar2 from '@/views/markdown/SideBar2.vue'
+import SideBar from '@/views/markdown/SideBar.vue'
 import { getFileContent, updateFileContent } from '@/api/file'
 import Share from '@/views/markdown/Share.vue'
 import MoveFile from '@/views/markdown/MoveFile.vue'
@@ -40,7 +49,7 @@ import { Navbar } from '@/layout/components'
 
 export default {
   name: 'TopicPost',
-  components: { Navbar, MoveFile, Share, SideBar2 },
+  components: { Navbar, MoveFile, Share, SideBar },
 
   data() {
     return {
@@ -147,12 +156,22 @@ export default {
     height: 100%;
     background-color: #f4f4f4;
     position: fixed;
+    margin-top: 0;
     &.open {
       width: @sidebar-width; // 展开状态
     }
 
     &.closed {
       width: 0; // 隐藏状态
+    }
+    .sidebar-header{
+      display: grid;
+      place-items: center; /* 水平和垂直居中对齐 */
+
+      font-size: 42px;
+      span{
+        font-size: 35px;
+      }
     }
   }
 
@@ -178,6 +197,7 @@ export default {
         flex-wrap: nowrap;
         margin-bottom: 10px;
         .title{
+          display: flex;
           font-weight: bolder;
           font-size: 1.5rem;
           white-space: nowrap; /* 防止标题换行 */

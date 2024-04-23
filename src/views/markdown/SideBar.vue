@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container">
+  <div id="sidebar" class="container">
     <el-tree
       ref="tree"
       :data="this.$store.state.menu.treeData"
@@ -82,7 +82,7 @@ export default {
 
 <style scoped lang="less">
 .container{
-  margin-top: 50px;
+  margin-top: 10px;
 
 }
 

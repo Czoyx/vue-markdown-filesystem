@@ -1,8 +1,10 @@
 <template>
   <span class="tree-item">
     <span class="file-icon">
-      <i v-if="nodeData.type===1" class="icon iconfont icon-wenjian" />
-      <i v-if="nodeData.type===0" class="icon iconfont icon-shiyongwendang" />
+      <svg class="icon" aria-hidden="true">
+        <use v-if="nodeData.type===1" xlink:href="#icon-wenjianleixing-suolvetu-wenjianjia" />
+        <use v-if="nodeData.type===0" xlink:href="#icon-markdown2" />
+      </svg>
     </span>
     <span class="title">
       <span v-if="isEditor">
@@ -157,6 +159,7 @@ export default {
     flex: 1; /* 填充剩余空间 */
     white-space: nowrap; /* 防止标题换行 */
     overflow: hidden; /* 超出部分隐藏 */
+    font-family: "Microsoft YaHei UI";
     text-overflow: ellipsis; /* 显示省略号 */
     .title-span{
       flex:1

@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5824876",
+      "name": "markdown",
+      "font_class": "markdown",
+      "unicode": "e6c0",
+      "unicode_decimal": 59072
+    },
+    {
+      "icon_id": "21721572",
+      "name": "文件类型-缩略图-文件夹",
+      "font_class": "wenjianleixing-suolvetu-wenjianjia",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "26138152",
+      "name": "markdown",
+      "font_class": "markdown1",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "36133548",
+      "name": "markdown",
+      "font_class": "markdown2",
+      "unicode": "e72f",
+      "unicode_decimal": 59183
+    },
+    {
       "icon_id": "1305479",
       "name": "刷新",
       "font_class": "shuaxin",
