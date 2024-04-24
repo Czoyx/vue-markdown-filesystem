@@ -20,7 +20,7 @@
       </span>
     </span>
     <span class="menuIcon">
-      <el-dropdown @command="handleCommand">
+      <el-dropdown trigger="click" @command="handleCommand">
         <span class="el-dropdown-link menuIcon">
           <i class="el-icon-arrow-down el-icon--right" />
         </span>

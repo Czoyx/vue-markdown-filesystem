@@ -54,7 +54,7 @@ export default {
     const { code, data } = res
     if (code === 200) {
       await this.$store.dispatch('menu/initRootNode', data)
-      await this.$store.dispatch('menu/loadChildrenForNode', rootID)
+      // await this.$store.dispatch('menu/loadChildrenForNode', rootID)
     }
   },
   methods: {
