@@ -7,7 +7,7 @@
         </svg>
         <span>Markdown</span>
       </div>
-      <SideBar @change-markdown="changeMarkdown" />
+      <SideBar @change-markdown="changeMarkdown" @open-share="openShareDialogWithData" @open-move="openMoveFileDialogWithData" />
     </div>
     <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
       <navbar @toggleSidebar="toggleSidebar" />
@@ -20,20 +20,20 @@
             <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
           </div>
           <div class="tool">
-            <el-button type="primary" size="mini" @click="shareDialogVisible=true">分享</el-button>
-            <el-button type="primary" size="mini" @click="moveFileDialogVisible=true">move</el-button>
+            <el-button type="primary" size="mini" @click="openShareDialogWithData(currentContentNodeData)">分享</el-button>
+            <el-button type="primary" size="mini" @click="openMoveFileDialogWithData(currentContentNodeData)">move</el-button>
             <el-button type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
           </div>
         </div>
 
         <div>
-          <div id="vditor" />
+          <div id="vditor" ref="vditor-container" class="vditor-container" />
         </div>
       </div>
     </div>
 
-    <Share :id="currentContentId" :show="shareDialogVisible" @close-dialog="closeDialog" />
-    <MoveFile :id="currentContentId" :show="moveFileDialogVisible" @close-dialog="closeDialog" />
+    <Share ref="shareDialog" :show="shareDialogVisible" @close-dialog="closeDialog" />
+    <MoveFile ref="moveDialog" :show="moveFileDialogVisible" :root-data="rootData" @close-dialog="closeDialog" />
   </div>
 </template>
 
@@ -42,7 +42,7 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
-import { getFileContent, updateFileContent } from '@/api/file'
+import { getFileContent, getFileInfo, updateFileContent } from '@/api/file'
 import Share from '@/views/markdown/Share.vue'
 import MoveFile from '@/views/markdown/MoveFile.vue'
 import { Navbar } from '@/layout/components'
@@ -54,28 +54,28 @@ export default {
   data() {
     return {
       contentEditor: {},
-      currentContentId: '',
+      currentContentNodeData: '',
       ruleForm: {
         title: '', // 标题
         content: '' // 内容
       },
-      rules: {
-        title: [
-          { message: '请输入话题名称', trigger: 'blur' },
-          {
-            min: 1,
-            max: 25,
-            message: '长度在 1 到 25 个字符',
-            trigger: 'blur'
-          }
-        ]
-      },
-      createDialogVisible: false,
       shareDialogVisible: false,
       moveFileDialogVisible: false,
       createType: 'file', // 新建类型,文件夹或文件
       currentParentId: '',
-      isSidebarOpen: true
+      isSidebarOpen: true,
+      rootData: {
+        id: 'undefined',
+        name: '我的云文档',
+        isLeaf: false,
+        permissions: {
+          read: true,
+          write: true,
+          manage: true
+        },
+        type: 1,
+        isRoot: true
+      }
     }
   },
   mounted() {
@@ -83,7 +83,7 @@ export default {
       'height': '100%',
       'width': '100%',
       minHeight: document.documentElement.scrollHeight - 200,
-      placeholder: '此处为话题内容……',
+      placeholder: '# 开始输入Markdown内容',
       theme: 'classic',
       counter: {
         enable: true,
@@ -107,12 +107,26 @@ export default {
       mode: 'ir'
     })
   },
+  async created() {
+    const rootID = this.$route.query.fileId || 'undefined'
+    if (rootID === 'undefined') {
+      this.$store.dispatch('menu/loadChildrenForNode', rootID)
+      return
+    }
+    const res = await getFileInfo(rootID)
+    const { code, data } = res
+    if (code === 200) {
+      await this.$store.dispatch('menu/initRootNode', data)
+      this.rootData = data
+      // await this.$store.dispatch('menu/loadChildrenForNode', rootID)
+    }
+  },
   methods: {
     async submitForm(formName) {
       const content = this.contentEditor.getValue()
       const res = await updateFileContent({
         'content': content,
-        'file_id': this.currentContentId
+        'file_id': this.currentContentNodeData.id
       })
       const { code, data, msg } = res
       if (code === 200) {
@@ -122,24 +136,36 @@ export default {
         this.$message.error(msg)
       }
     },
-    async changeMarkdown(id, name) {
+    async changeMarkdown(nodaDate, name, per) {
       this.ruleForm.title = name
-      this.currentContentId = id
-      const res = await getFileContent(id)
+      this.currentContentNodeData = nodaDate
+      const res = await getFileContent(nodaDate.id)
       const { code, data, msg } = res
       if (code === 200) {
-        this.contentEditor.setValue(data)
+        this.contentEditor.setValue(data, true)
+        if (per) {
+          this.contentEditor.enable()
+        } else {
+          this.contentEditor.disabled()
+        }
       } else {
         this.$message.error(msg)
       }
     },
     closeDialog() {
-      this.createDialogVisible = false
       this.shareDialogVisible = false
       this.moveFileDialogVisible = false
     },
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen
+    },
+    async openShareDialogWithData(nodeData) {
+      await this.$refs.shareDialog.reloadData(nodeData)
+      this.shareDialogVisible = true
+    },
+    openMoveFileDialogWithData(nodeData) {
+      this.$refs.moveDialog.reloadData(nodeData)
+      this.moveFileDialogVisible = true
     }
   }
 }

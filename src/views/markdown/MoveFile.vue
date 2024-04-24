@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="移动"
+    :title="title"
     :visible.sync="show"
     width="60%"
     :before-close="handleClose"
@@ -28,9 +28,18 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    rootData: {
+      type: Object,
+      required: true
+    },
+    title: {
+      type: String,
+      default: '移动'
     }
   },
   data() {
+    const { id: rootid, name: rootname, type: roottype } = this.rootData
     return {
       form: {
         id: '',
@@ -42,11 +51,15 @@ export default {
         async lazyLoad(node, resolve) {
           const { level } = node
           if (level === 0) {
-            resolve([{
-              value: 'undefined',
-              label: '我的云文档',
-              leaf: false
-            }])
+            if (roottype === 1) {
+              resolve([{
+                value: rootid,
+                label: rootname,
+                leaf: false
+              }])
+            } else {
+              return resolve([])
+            }
           } else {
             const res = await getFileListById(node.value)
             const { code, data, msg } = res
@@ -96,6 +109,10 @@ export default {
         })
         this.$emit('close-dialog')
       }
+    },
+    reloadData(nodeData) {
+      this.id = nodeData.id
+      this.title = '移动 ' + nodeData.name
     }
   }
 }

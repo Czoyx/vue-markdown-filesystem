@@ -41,6 +41,10 @@
             <i class="icon iconfont icon-shanchu" />
             删除
           </el-dropdown-item>
+          <el-dropdown-item v-if="!nodeData.isRoot" command="move" :disabled="!nodeData.permissions.manage">
+            <i class="icon iconfont icon-yidongwenjian" />
+            移动
+          </el-dropdown-item>
           <el-dropdown-item v-if="!(nodeData.id==='undefined')" command="rename" :disabled="!nodeData.permissions.write">
             <i class="icon iconfont icon-zhongmingming" />
             重命名
@@ -88,6 +92,12 @@ export default {
           break
         case 'rename':
           this.startRenameFile()
+          break
+        case 'share':
+          this.$emit('open-share', this.nodeData)
+          break
+        case 'move':
+          this.$emit('open-move', this.nodeData)
           break
       }
     },

@@ -15,6 +15,8 @@
         <TreeItem
           :node="node"
           :node-data="data"
+          @open-move="openMove"
+          @open-share="openShare"
         />
       </span>
     </el-tree>
@@ -24,7 +26,6 @@
 <script>
 
 import TreeItem from '@/views/markdown/TreeItem.vue'
-import { getFileInfo } from '@/api/file'
 
 export default {
   components: { TreeItem },
@@ -44,19 +45,6 @@ export default {
       }
     }
   },
-  async created() {
-    const rootID = this.$route.query.fileId || 'undefined'
-    if (rootID === 'undefined') {
-      this.$store.dispatch('menu/loadChildrenForNode', rootID)
-      return
-    }
-    const res = await getFileInfo(rootID)
-    const { code, data } = res
-    if (code === 200) {
-      await this.$store.dispatch('menu/initRootNode', data)
-      // await this.$store.dispatch('menu/loadChildrenForNode', rootID)
-    }
-  },
   methods: {
     handleNodeExpand(node, nodeComponent) {
       if (!node.isLeaf && node.id !== 'undefined') {
@@ -71,10 +59,16 @@ export default {
     handleNodeClick(node) {
       if (node.isLeaf) {
         if (node.id) {
-          this.$emit('change-markdown', node.id, node.name)
+          this.$emit('change-markdown', node, node.name, node.permissions.write)
           console.log(node)
         }
       }
+    },
+    openShare(data) {
+      this.$emit('open-share', data)
+    },
+    openMove(data) {
+      this.$emit('open-move', data)
     }
   }
 }

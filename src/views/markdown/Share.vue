@@ -1,15 +1,15 @@
 <template>
   <el-dialog
-    title="分享"
+    :title="title"
     :visible.sync="show"
     width="60%"
     :before-close="handleClose"
   >
-    <el-form ref="form" :model="form" label-width="70px">
+    <el-form label-width="70px">
       <el-form-item label="链接">
         <el-row span="24" gutter="5">
           <el-col span="18">
-            <el-input ref="input" :v-model="form.url" :disabled="true" readonly />
+            <el-input ref="input" :value="fileUrl" :disabled="true" readonly />
           </el-col>
           <el-col span="4">
             <el-button ref="copyButton" type="primary" @click="copyToClipboard">复制</el-button>
@@ -18,25 +18,34 @@
       </el-form-item>
       <el-form-item label="链接权限">
         <el-select
-          v-model="form.control"
+          :v-model="userList"
           clearable
           multiple
-          placeholder="请选择链接权限"
-          style="width: 100%"
+          placeholder="请选择范围"
+          style="width: 50%"
+        >
+          <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+        <el-select
+          :v-model="control"
+          clearable
+          multiple
+          placeholder="请选择权限"
+          style="width: 50%"
         >
           <el-option v-for="item in control" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="协作者">
         <el-select
-          v-model="form.userList"
+          :v-model="permissionList"
           filterable
           clearable
           multiple
           placeholder="请选择协作者"
-          style="width: 100%"
+          style="width: 50%"
         >
-          <el-option v-for="item in userList" :key="item.value" :label="item.name" :value="item.value" />
+          <el-option v-for="item in permissionList" :key="item.value" :label="item.name" :value="item.value" />
         </el-select>
       </el-form-item>
     </el-form>
@@ -46,7 +55,9 @@
     </span>
   </el-dialog>
 </template>
-<script >
+<script>
+
+import { listPermission, updatePermission } from '@/api/permission'
 
 export default {
   props: {
@@ -57,16 +68,21 @@ export default {
     id: {
       type: String,
       default: ''
+    },
+    fileUrl: {
+      type: String,
+      default: 'http://localhost:9528/#/markdown?fileId='
+    },
+    permissionList: {
+      type: Array
+    },
+    title: {
+      type: String,
+      default: '分享'
     }
   },
   data() {
     return {
-      form: {
-        id: this.id,
-        url: 'http://localhost:9528/#/markdown?fileId=',
-        control: [],
-        userList: []
-      },
       control: [
         {
           label: '读',
@@ -81,7 +97,17 @@ export default {
           value: 'manage'
         }
       ],
-      userList: [{ name: 'lsc' }]
+      userList: [
+        {
+          label: '所有人',
+          value: 123456
+        },
+        {
+          label: '指定人',
+          value: 0
+        }
+      ],
+      shareUrl: this.fileUrl
     }
   },
   methods: {
@@ -106,6 +132,31 @@ export default {
         })
       } else {
         console.error('浏览器不支持 Clipboard API')
+      }
+    },
+    async reloadData(nodeData) {
+      this.id = nodeData.id
+      this.title = '分享 ' + nodeData.name
+      this.fileUrl = 'http://localhost:9528/#/markdown?fileId=' + String(this.id)
+      console.log(this.fileUrl)
+      const res = await listPermission(this.id)
+      const { code, data, msg } = res
+      if (code === 200) {
+        this.permissionList = data
+      } else {
+        this.$message.error(msg)
+      }
+      this.$forceUpdate()
+    },
+    async submitPermission(data) {
+      const req = {
+        file_id: this.id,
+        permission: data.permission,
+        user_id: data.user_id
+      }
+      const res = await updatePermission(req)
+      if (res.code === 200) {
+        this.$message.success('权限更新成功')
       }
     }
   }
