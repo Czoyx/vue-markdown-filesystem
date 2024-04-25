@@ -1,12 +1,7 @@
 <template>
   <div class="md-container">
     <div class="left-side-bar" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
-      <div class="sidebar-header">
-        <svg class="icon svg-icon" aria-hidden="true">
-          <use xlink:href="#icon-markdown1" />
-        </svg>
-        <span>Markdown</span>
-      </div>
+
       <SideBar @change-markdown="changeMarkdown" @open-share="openShareDialogWithData" @open-move="openMoveFileDialogWithData" />
     </div>
     <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
@@ -189,15 +184,6 @@ export default {
 
     &.closed {
       width: 0; // 隐藏状态
-    }
-    .sidebar-header{
-      display: grid;
-      place-items: center; /* 水平和垂直居中对齐 */
-
-      font-size: 42px;
-      span{
-        font-size: 35px;
-      }
     }
   }
 

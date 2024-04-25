@@ -1,5 +1,15 @@
 <template>
   <div id="sidebar" class="container">
+    <div class="sidebar-header">
+      <div>
+        <svg class="icon svg-icon" aria-hidden="true">
+          <use xlink:href="#icon-markdown1" />
+        </svg>
+      </div>
+      <span>
+        Markdown
+      </span>
+    </div>
     <el-tree
       ref="tree"
       :data="this.$store.state.menu.treeData"
@@ -75,9 +85,20 @@ export default {
 </script>
 
 <style scoped lang="less">
-.container{
-  margin-top: 10px;
 
+.sidebar-header{
+  display: flex;
+  place-items: center; /* 水平和垂直居中对齐 */
+  flex-direction: column;
+  font-size: 60px;
+  span{
+    margin-top: 0;
+    font-size: 35px;
+  }
+}
+
+.el-tree{
+  margin-top: 20px;
 }
 
 ::v-deep .el-tree {
