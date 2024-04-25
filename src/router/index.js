@@ -43,14 +43,13 @@ export const constantRoutes = [
     hidden: true
   },
 
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/markdown'
+  // },
   {
     path: '/',
-    component: Layout,
-    redirect: '/markdown'
-  },
-
-  {
-    path: '/markdown',
     // component: Layout,
     component: () => import('@/views/markdown/index.vue'),
     name: 'MarkdownDemo',
