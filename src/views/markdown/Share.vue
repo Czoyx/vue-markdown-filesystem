@@ -19,21 +19,29 @@
       <el-form-item label="链接权限">
         <el-select
           :v-model="userList"
-          clearable
-          multiple
           placeholder="请选择范围"
           style="width: 50%"
+          :value="allUserPermission.user"
         >
-          <el-option v-for="item in userList" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option
+            v-for="item in userList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
         <el-select
           :v-model="control"
-          clearable
-          multiple
           placeholder="请选择权限"
           style="width: 50%"
+          :value="allUserPermission.permission"
         >
-          <el-option v-for="item in control" :key="item.value" :label="item.label" :value="item.value" />
+          <el-option
+            v-for="item in control"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="协作者">
@@ -86,15 +94,27 @@ export default {
       control: [
         {
           label: '读',
-          value: 'read'
+          value: {
+            read: true,
+            write: false,
+            manage: false
+          }
         },
         {
           label: '写',
-          value: 'write'
+          value: {
+            read: true,
+            write: true,
+            manage: false
+          }
         },
         {
           label: '管理',
-          value: 'manage'
+          value: {
+            read: true,
+            write: true,
+            manage: true
+          }
         }
       ],
       userList: [
@@ -107,7 +127,14 @@ export default {
           value: 0
         }
       ],
-      shareUrl: this.fileUrl
+      allUserPermission: {
+        user: 0,
+        permission: {
+          read: true,
+          write: true,
+          manage: false
+        }
+      }
     }
   },
   methods: {
