@@ -18,10 +18,9 @@
       </el-form-item>
       <el-form-item label="链接权限">
         <el-select
-          :v-model="userList"
+          v-model="allUserPermission.user"
           placeholder="请选择范围"
           style="width: 50%"
-          :value="allUserPermission.user"
         >
           <el-option
             v-for="item in userList"
@@ -31,10 +30,9 @@
           />
         </el-select>
         <el-select
-          :v-model="control"
+          v-model="allUserPermission.permission"
           placeholder="请选择权限"
           style="width: 50%"
-          :value="allUserPermission.permission"
         >
           <el-option
             v-for="item in control"
@@ -81,9 +79,6 @@ export default {
       type: String,
       default: 'http://localhost:9528/#/markdown?fileId='
     },
-    permissionList: {
-      type: Array
-    },
     title: {
       type: String,
       default: '分享'
@@ -94,27 +89,15 @@ export default {
       control: [
         {
           label: '读',
-          value: {
-            read: true,
-            write: false,
-            manage: false
-          }
+          value: 1
         },
         {
           label: '写',
-          value: {
-            read: true,
-            write: true,
-            manage: false
-          }
+          value: 2
         },
         {
           label: '管理',
-          value: {
-            read: true,
-            write: true,
-            manage: true
-          }
+          value: 3
         }
       ],
       userList: [
@@ -129,12 +112,9 @@ export default {
       ],
       allUserPermission: {
         user: 0,
-        permission: {
-          read: true,
-          write: true,
-          manage: false
-        }
-      }
+        permission: 3
+      },
+      permissionList: []
     }
   },
   methods: {
