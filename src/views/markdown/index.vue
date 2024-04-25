@@ -54,7 +54,7 @@ export default {
         title: '', // 标题
         content: '' // 内容
       },
-      shareDialogVisible: false,
+      shareDialogVisible: true,
       moveFileDialogVisible: false,
       createType: 'file', // 新建类型,文件夹或文件
       currentParentId: '',

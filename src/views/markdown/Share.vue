@@ -4,6 +4,7 @@
     :visible.sync="show"
     width="60%"
     :before-close="handleClose"
+    class="share-dialog"
   >
     <el-form label-width="70px">
       <el-form-item label="链接">
@@ -42,23 +43,45 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="协作者">
-        <el-select
-          :v-model="permissionList"
-          filterable
-          clearable
-          multiple
-          placeholder="请选择协作者"
-          style="width: 50%"
-        >
-          <el-option v-for="item in permissionList" :key="item.value" :label="item.name" :value="item.value" />
-        </el-select>
-      </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="handleClose">取 消</el-button>
-      <el-button type="primary" @click="submit">保存</el-button>
-    </span>
+    <div>
+      <span>
+        协作者
+      </span>
+      <el-table
+        :data="permissionList"
+        border
+        tyle="width: 100%"
+        :show-header="false"
+      >
+        <el-table-column
+          fixed
+          prop="username"
+          label="用户名"
+          width="150"
+        />
+        <el-table-column
+          fixed="right"
+          label="操作"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <el-select
+              v-model="scope.row.permission"
+              placeholder="请选择权限"
+              style="width: 50%"
+            >
+              <el-option
+                v-for="item in control"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </el-dialog>
 </template>
 <script>
@@ -114,7 +137,13 @@ export default {
         user: 0,
         permission: 3
       },
-      permissionList: []
+      permissionList: [
+        {
+          username: '123',
+          userid: 123123,
+          permission: 3
+        }
+      ]
     }
   },
   methods: {
