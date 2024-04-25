@@ -11,7 +11,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <el-avatar :style="`background:${extractColorByName('管理员')}`"> 管理员 </el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -33,6 +33,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { extractColorByName } from '@/utils/avatar'
 
 export default {
   components: {
@@ -46,6 +47,7 @@ export default {
     ])
   },
   methods: {
+    extractColorByName,
     toggleSideBar() {
       this.$emit('toggleSidebar')
       this.$store.dispatch('app/toggleSideBar')
