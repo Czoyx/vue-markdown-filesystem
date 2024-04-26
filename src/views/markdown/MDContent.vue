@@ -18,7 +18,7 @@
       <div
         id="vditor"
         ref="vditor-container"
-        class="editor-wrapper"
+        class="vvvditor-wrapper"
         :class="readOnly ? 'readonly' : ''"
       />
     </div>
@@ -29,7 +29,7 @@
 // import { post } from '@/api/post'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { getFileContent, getFileInfo, updateFileContent } from '@/api/file'
+import { getFileContent, updateFileContent } from '@/api/file'
 
 export default {
   name: 'MDContent',
@@ -107,7 +107,7 @@ export default {
       const { code, data, msg } = res
       if (code === 200) {
         this.contentEditor.setValue(data, true)
-        this.readOnly = per.write
+        this.readOnly = !per.write
         this.manageable = per.manage
         await this.$forceUpdate()
       } else {
@@ -156,7 +156,7 @@ export default {
   width: 250px;
 }
 
-::v-deep .editor-wrapper.readonly{
+.vvvditor-wrapper.readonly ::v-deep{
   pointer-events: none;
 }
 

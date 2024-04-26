@@ -11,7 +11,7 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <el-avatar :style="`background:${extractColorByName('管理员')}`"> 管理员 </el-avatar>
+          <el-avatar :style="`background:${extractColorByName(username)}`">{{ username }}</el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -34,17 +34,32 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { extractColorByName } from '@/utils/avatar'
+import { getInfo } from '@/api/user'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+  props: {
+    username: {
+      type: String
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar'
     ])
+  },
+  async created() {
+    const res = await getInfo()
+    const { code, data, msg } = res
+    if (code === 200) {
+      this.username = data.name
+    } else {
+      console.log(msg)
+    }
   },
   methods: {
     extractColorByName,

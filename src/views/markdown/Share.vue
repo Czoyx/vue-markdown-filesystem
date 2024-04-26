@@ -24,6 +24,7 @@
                 v-model="allUserPermission.user"
                 placeholder="请选择范围"
                 style="width: 100%"
+                @change="handleAllUser()"
               >
                 <el-option
                   v-for="item in allUserList"
@@ -110,7 +111,7 @@
                   size="mini"
                   @click="handleAddUser"
                 >
-                  <i class="icon iconfont icon-tianjiarenyuan" />
+                  <i class="icon iconfont icon-tianjiarenyuan" style="color: #1e7ffd" />
                 </el-button>
               </div>
 
@@ -134,7 +135,7 @@
                   size="mini"
                   @click="handleDelete(scope.$index,scope.row)"
                 >
-                  <i class="icon iconfont icon-shanchu" />
+                  <i class="icon iconfont icon-shanchu" style="color: red" />
                 </el-button>
               </div>
 
@@ -227,11 +228,11 @@ export default {
       allUserList: [
         {
           label: '所有人',
-          value: 123456
+          value: '123456'
         },
         {
           label: '指定人',
-          value: 0
+          value: '0'
         }
       ],
       userList: [
@@ -245,8 +246,8 @@ export default {
         permissionIndex: undefined
       },
       allUserPermission: {
-        user: 0,
-        permission: 1
+        user: undefined,
+        permission: undefined
       }
     }
   },
@@ -357,6 +358,16 @@ export default {
         } else {
           this.$message.warning(msg)
         }
+      }
+    },
+    async handleAllUser() {
+      if (this.currentAddUserData.permissionIndex && this.currentAddUserData.userId) {
+        const perVal = this.currentAddUserData.permissionIndex
+        const id = this.currentAddUserData.userId
+        if (id === '0') {
+          await this.handleChange(0, { user_id: this.allUserList[0].value })
+        }
+        await this.handleChange(perVal, { user_id: this.allUserList[0].value })
       }
     }
   }
