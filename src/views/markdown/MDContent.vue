@@ -14,12 +14,13 @@
       </div>
     </div>
 
-    <div>
+    <div
+      class="vvvditor-wrapper"
+      :class="readOnly ? 'rrreadonly' : ''"
+    >
       <div
         id="vditor"
         ref="vditor-container"
-        class="vvvditor-wrapper"
-        :class="readOnly ? 'readonly' : ''"
       />
     </div>
   </div>
@@ -156,7 +157,7 @@ export default {
   width: 250px;
 }
 
-.vvvditor-wrapper.readonly ::v-deep{
+.vvvditor-wrapper.rrreadonly ::v-deep{
   pointer-events: none;
 }
 
