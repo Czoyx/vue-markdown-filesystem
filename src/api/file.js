@@ -9,21 +9,21 @@ export function getFileList(data) {
 
 export function getFileListById(id) {
   return request({
-    url: `/file/list/${id}`,
+    url: `/file/${id}/list`,
     method: 'get'
   })
 }
 
 export function getFileContent(id) {
   return request({
-    url: `/file/content/${id}`,
+    url: `/file/${id}/content`,
     method: 'get'
   })
 }
 
 export function updateFileContent(data) {
   return request({
-    url: `/file/content`,
+    url: `/file/${data.file_id}/content`,
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function updateFileContent(data) {
 
 export function createFile(data) {
   return request({
-    url: `/file/create`,
+    url: `/file/${data.parent_id}/create`,
     method: 'post',
     data: data
   })
@@ -39,7 +39,7 @@ export function createFile(data) {
 
 export function createFolder(data) {
   return request({
-    url: `/file/folder`,
+    url: `/file/${data.parent_id}/folder`,
     method: 'post',
     data: data
   })
@@ -47,21 +47,21 @@ export function createFolder(data) {
 
 export function deleteFile(id) {
   return request({
-    url: `/file/delete/${id}`,
+    url: `/file/${id}/delete`,
     method: 'delete'
   })
 }
 
 export function getFileInfo(id) {
   return request({
-    url: `/file/info/${id}`,
+    url: `/file/${id}/info`,
     method: 'get'
   })
 }
 
 export function rename(data) {
   return request({
-    url: `/file/rename`,
+    url: `/file/${data.file_id}/rename`,
     method: 'post',
     data: data
   })
@@ -69,7 +69,7 @@ export function rename(data) {
 
 export function operateFile(data) {
   return request({
-    url: `/file/operate`,
+    url: `/file/${data.parent_id}/operate`,
     method: 'post',
     data: data
   })
