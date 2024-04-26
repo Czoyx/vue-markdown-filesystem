@@ -69,7 +69,7 @@ export default {
     handleNodeClick(node) {
       if (node.isLeaf) {
         if (node.id) {
-          this.$emit('change-markdown', node, node.name, node.permissions.write)
+          this.$emit('change-markdown', node)
           console.log(node)
         }
       }

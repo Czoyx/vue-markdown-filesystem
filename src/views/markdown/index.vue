@@ -6,24 +6,14 @@
     </div>
     <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
       <navbar @toggleSidebar="toggleSidebar" />
-      <div class="md-content">
-        <div class="title-bar">
-          <div class="title">
-            <svg class="icon svg-icon" aria-hidden="true">
-              <use xlink:href="#icon-markdown2" />
-            </svg>
-            <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
-          </div>
-          <div class="tool">
-            <el-button type="primary" size="mini" @click="openShareDialogWithData(currentContentNodeData)">分享</el-button>
-            <el-button type="primary" size="mini" @click="openMoveFileDialogWithData(currentContentNodeData)">move</el-button>
-            <el-button type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
-          </div>
-        </div>
-
-        <div>
-          <div id="vditor" ref="vditor-container" class="vditor-container" />
-        </div>
+      <div v-if="currentContentNodeData!==undefined" class="md-content">
+        <MDContent
+          ref="mdContent"
+          :rule-form="ruleForm"
+          :current-content-node-data="currentContentNodeData"
+          @open-share="openShareDialogWithData"
+          @open-move="openMoveFileDialogWithData"
+        />
       </div>
     </div>
 
@@ -37,6 +27,7 @@
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'
+import MDContent from '@/views/markdown/MDContent.vue'
 import { getFileContent, getFileInfo, updateFileContent } from '@/api/file'
 import Share from '@/views/markdown/Share.vue'
 import MoveFile from '@/views/markdown/MoveFile.vue'
@@ -44,20 +35,17 @@ import { Navbar } from '@/layout/components'
 
 export default {
   name: 'TopicPost',
-  components: { Navbar, MoveFile, Share, SideBar },
+  components: { Navbar, MoveFile, Share, SideBar, MDContent },
 
   data() {
     return {
-      contentEditor: {},
-      currentContentNodeData: '',
+      currentContentNodeData: undefined,
       ruleForm: {
         title: '', // 标题
         content: '' // 内容
       },
-      shareDialogVisible: true,
+      shareDialogVisible: false,
       moveFileDialogVisible: false,
-      createType: 'file', // 新建类型,文件夹或文件
-      currentParentId: '',
       isSidebarOpen: true,
       rootData: {
         id: 'undefined',
@@ -72,35 +60,6 @@ export default {
         isRoot: true
       }
     }
-  },
-  mounted() {
-    this.contentEditor = new Vditor('vditor', {
-      'height': '100%',
-      'width': '100%',
-      minHeight: document.documentElement.scrollHeight - 200,
-      placeholder: '# 开始输入Markdown内容',
-      theme: 'classic',
-      counter: {
-        enable: true,
-        type: 'markdown'
-      },
-      preview: {
-        delay: 0,
-        hljs: {
-          style: 'monokai',
-          lineNumber: true
-        }
-      },
-      tab: '\t',
-      typewriterMode: true,
-      toolbarConfig: {
-        pin: true
-      },
-      cache: {
-        enable: false
-      },
-      mode: 'ir'
-    })
   },
   async created() {
     const rootID = this.$route.query.fileId || 'undefined'
@@ -117,35 +76,11 @@ export default {
     }
   },
   methods: {
-    async submitForm(formName) {
-      const content = this.contentEditor.getValue()
-      const res = await updateFileContent({
-        'content': content,
-        'file_id': this.currentContentNodeData.id
-      })
-      const { code, data, msg } = res
-      if (code === 200) {
-        this.$message.success(msg)
-      } else {
-        console.log('error submit!!data:', data)
-        this.$message.error(msg)
-      }
-    },
-    async changeMarkdown(nodaDate, name, per) {
-      this.ruleForm.title = name
+    async changeMarkdown(nodaDate) {
       this.currentContentNodeData = nodaDate
-      const res = await getFileContent(nodaDate.id)
-      const { code, data, msg } = res
-      if (code === 200) {
-        this.contentEditor.setValue(data, true)
-        if (per) {
-          this.contentEditor.enable()
-        } else {
-          this.contentEditor.disabled()
-        }
-      } else {
-        this.$message.error(msg)
-      }
+      this.ruleForm.title = nodaDate.name
+      await this.$forceUpdate()
+      await this.$refs.mdContent.changeMarkdown1(nodaDate.id, nodaDate.name, nodaDate.permissions)
     },
     closeDialog() {
       this.shareDialogVisible = false
