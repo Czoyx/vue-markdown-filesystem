@@ -278,7 +278,7 @@ export default {
     async reloadData(nodeData) {
       this.id = nodeData.id
       this.title = '分享 ' + nodeData.name
-      this.fileUrl = location.host + '/?fileId=' + String(this.id)
+      this.fileUrl = location.host + '/#/?fileId=' + String(this.id)
       console.log(this.fileUrl)
       {
         const res = await listUser(this.id)
