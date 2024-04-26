@@ -81,10 +81,10 @@
             </template>
             <template slot-scope="scope">
               <div style="display: flex;align-items: center">
-                <el-avatar :style="`background:${extractColorByName(scope.row.username)}`" class="avatar">
-                  {{ scope.row.username }}
+                <el-avatar :style="`background:${extractColorByName(scope.row.user_name)}`" class="avatar">
+                  {{ scope.row.user_name }}
                 </el-avatar>
-                <span>{{ scope.row.username }}</span>
+                <span>{{ scope.row.user_name }}</span>
               </div>
             </template>
           </el-table-column>
@@ -150,6 +150,7 @@
 
 import { listPermission, updatePermission } from '@/api/permission'
 import { extractColorByName } from '@/utils/avatar'
+import { listUser } from '@/api/user'
 
 export default {
   props: {
@@ -168,6 +169,17 @@ export default {
     title: {
       type: String,
       default: '分享'
+    },
+    permissionList: {
+      type: Array,
+      default: () => [
+        {
+          user_name: '156645646',
+          user_id: 123123,
+          permissionIndex: 1,
+          fileID: 'dwdadsad'
+        }
+      ]
     }
   },
   data() {
@@ -224,44 +236,18 @@ export default {
       ],
       userList: [
         {
-          'id': 123456,
+          'id': '123456',
           'name': 'string'
         }
       ],
       currentAddUserData: {
-        userId: '',
+        userId: undefined,
         permissionIndex: undefined
       },
       allUserPermission: {
         user: 0,
         permission: 1
-      },
-      permissionList: [
-        {
-          username: '156645646',
-          userid: 123123,
-          permissionIndex: 1,
-          fileID: 'dwdadsad'
-        },
-        {
-          username: '2',
-          userid: 123123,
-          permissionIndex: 2,
-          fileID: 'dwdadsad'
-        },
-        {
-          username: '3',
-          userid: 123123,
-          permissionIndex: 3,
-          fileID: 'dwdadsad'
-        },
-        {
-          username: '4',
-          userid: 123123,
-          permissionIndex: 2,
-          fileID: 'dwdadsad'
-        }
-      ]
+      }
     }
   },
   methods: {
@@ -294,26 +280,39 @@ export default {
       this.title = '分享 ' + nodeData.name
       this.fileUrl = location.host + '/?fileId=' + String(this.id)
       console.log(this.fileUrl)
-      const res = await listPermission(this.id)
-      const { code, data, msg } = res
-      if (code === 200) {
-        const newData = data.map(item => {
-          return {
-            ...item,
-            permissionIndex: this.permissionIndex.findIndex(i => (i.read === item.read && i.write === item.write && i.manage === item.manage))
-          }
-        })
-        this.permissionList = newData
-      } else {
-        this.$message.error(msg)
+      {
+        const res = await listUser(this.id)
+        const { code, data, msg } = res
+        if (code === 200) {
+          this.userList = data
+        } else {
+          this.$message.error(msg)
+        }
       }
-      this.$forceUpdate()
+      {
+        const res = await listPermission(this.id)
+        const { code, data, msg } = res
+        if (code === 200) {
+          const newData = data.map(item => {
+            return {
+              ...item,
+              permissionIndex: this.permissionIndex.findIndex(
+                i => (i.read === item.permission.read &&
+                  i.write === item.permission.write &&
+                  i.manage === item.permission.manage))
+            }
+          })
+          this.permissionList = newData
+        } else {
+          this.$message.error(msg)
+        }
+      }
     },
     async handleChange(value, row) {
       const req = {
-        'file_id': row.fileID,
+        'file_id': this.id,
         'permission': this.permissionIndex[value],
-        'user_id': row.userid
+        'user_id': row.user_id
       }
       const res = await updatePermission(req)
       const { code, data, msg } = res
@@ -325,9 +324,9 @@ export default {
     },
     async handleDelete(index, row) {
       const req = {
-        'file_id': row.fileID,
+        'file_id': this.id,
         'permission': this.permissionIndex[0],
-        'user_id': row.userid
+        'user_id': row.user_id
       }
       const res = await updatePermission(req)
       const { code, data, msg } = res
@@ -339,7 +338,7 @@ export default {
       }
     },
     async handleAddUser() {
-      if (this.currentAddUserData.permissionIndex) {
+      if (this.currentAddUserData.permissionIndex && this.currentAddUserData.userId) {
         const req = {
           'file_id': this.id,
           'permission': this.permissionIndex[this.currentAddUserData.permissionIndex],
@@ -349,10 +348,10 @@ export default {
         const { code, data, msg } = res
         if (code === 200) {
           this.permissionList.push({
-            username: this.userList.filter(item => item.id === this.currentAddUserData.userId)[0].name,
-            userid: this.currentAddUserData.userId,
+            user_name: this.userList.filter(item => item.id === this.currentAddUserData.userId)[0].name,
+            user_id: this.currentAddUserData.userId,
             permissionIndex: this.currentAddUserData.permissionIndex,
-            fileID: this.id
+            file_id: this.id
           })
           console.log(data)
         } else {
