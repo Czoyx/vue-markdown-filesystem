@@ -1,19 +1,20 @@
 <template>
   <div id="md-content" class="container">
-    <div class="title-bar">
-      <div class="title">
-        <svg class="icon svg-icon" aria-hidden="true">
-          <use xlink:href="#icon-markdown2" />
-        </svg>
-        <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
-      </div>
-      <div class="tool">
-        <el-button v-if="manageable" type="primary" size="mini" @click="openShareDialogWithData(currentContentNodeData)">分享</el-button>
-        <el-button v-if="manageable" type="primary" size="mini" @click="openMoveFileDialogWithData(currentContentNodeData)">move</el-button>
-        <el-button v-if="!readOnly" type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
-      </div>
-    </div>
+
     <el-card v-loading="loading">
+      <div class="title-bar">
+        <div class="title">
+          <svg class="icon svg-icon" aria-hidden="true">
+            <use xlink:href="#icon-markdown2" />
+          </svg>
+          <span class="fa fa fa-book ">{{ ruleForm.title }} </span>
+        </div>
+        <div class="tool">
+          <el-button v-if="manageable" type="primary" size="mini" @click="openShareDialogWithData(currentContentNodeData)">分享</el-button>
+          <el-button v-if="manageable" type="primary" size="mini" @click="openMoveFileDialogWithData(currentContentNodeData)">move</el-button>
+          <el-button v-if="!readOnly" type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
+        </div>
+      </div>
       <div
         class="vvvditor-wrapper"
         :class="readOnly ? 'rrreadonly' : ''"

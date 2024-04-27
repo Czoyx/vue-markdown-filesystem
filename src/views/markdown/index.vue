@@ -6,7 +6,7 @@
     </div>
     <div class="right-content" :class="{ 'open': isSidebarOpen, 'closed': !isSidebarOpen }">
       <navbar @toggleSidebar="toggleSidebar" />
-      <div v-if="currentContentNodeData!==undefined" class="md-content">
+      <div v-show="currentContentNodeData!==undefined" class="md-content">
         <MDContent
           ref="mdContent"
           :rule-form="ruleForm"
