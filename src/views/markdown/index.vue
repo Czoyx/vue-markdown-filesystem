@@ -23,7 +23,6 @@
 </template>
 
 <script>
-// import { post } from '@/api/post'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import SideBar from '@/views/markdown/SideBar.vue'

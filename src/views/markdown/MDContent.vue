@@ -13,21 +13,22 @@
         <el-button v-if="!readOnly" type="primary" size="mini" @click="submitForm('ruleForm')">保存</el-button>
       </div>
     </div>
-
-    <div
-      class="vvvditor-wrapper"
-      :class="readOnly ? 'rrreadonly' : ''"
-    >
+    <el-card v-loading="loading">
       <div
-        id="vditor"
-        ref="vditor-container"
-      />
-    </div>
+        class="vvvditor-wrapper"
+        :class="readOnly ? 'rrreadonly' : ''"
+      >
+        <div
+          id="vditor"
+          ref="vditor-container"
+          v-loading="loading"
+        />
+      </div>
+    </el-card>
+
   </div>
 </template>
-<script >
-
-// import { post } from '@/api/post'
+<script>
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { getFileContent, updateFileContent } from '@/api/file'
@@ -54,48 +55,43 @@ export default {
   },
   data() {
     return {
+      loading: false
     }
   },
   mounted() {
-    this.contentEditor = new Vditor('vditor', {
-      'height': '100%',
-      'width': '100%',
-      minHeight: document.documentElement.scrollHeight - 200,
-      placeholder: '# 开始输入Markdown内容',
-      theme: 'classic',
-      counter: {
-        enable: true,
-        type: 'markdown'
-      },
-      preview: {
-        delay: 0,
-        hljs: {
-          style: 'monokai',
-          lineNumber: true
-        }
-      },
-      tab: '\t',
-      typewriterMode: true,
-      toolbarConfig: {
-        pin: true
-      },
-      cache: {
-        enable: false
-      },
-      mode: 'ir'
-    })
-  },
-  async created() {
-
+    this.loadEditor()
   },
   methods: {
+    async loadEditor() {
+      this.loading = true // 开始加载时设置loading为true
+      try {
+        this.contentEditor = new Vditor('vditor', {
+          height: '100%',
+          width: '100%',
+          minHeight: document.documentElement.scrollHeight - 200,
+          placeholder: '# 开始输入Markdown内容',
+          theme: 'classic',
+          counter: { enable: true, type: 'markdown' },
+          preview: { delay: 0, hljs: { style: 'monokai', lineNumber: true }},
+          tab: '\t',
+          typewriterMode: true,
+          toolbarConfig: { pin: true },
+          cache: { enable: false },
+          mode: 'ir'
+        })
+      } finally {
+        this.loading = false // 加载完成后设置loading为false
+      }
+    },
     async submitForm(formName) {
+      this.loading = true // 提交数据前设置loading为true
       const content = this.contentEditor.getValue()
       const res = await updateFileContent({
         'content': content,
         'file_id': this.currentContentNodeData.id
       })
       const { code, data, msg } = res
+      this.loading = false // 提交完成后设置loading为false
       if (code === 200) {
         this.$message.success(msg)
       } else {
@@ -104,8 +100,10 @@ export default {
       }
     },
     async changeMarkdown1(id, name, per) {
+      this.loading = true // 加载内容前设置loading为true
       const res = await getFileContent(id)
       const { code, data, msg } = res
+      this.loading = false // 加载完成后设置loading为false
       if (code === 200) {
         this.contentEditor.setValue(data, true)
         this.readOnly = !per.write
@@ -115,7 +113,7 @@ export default {
         this.$message.error(msg)
       }
     },
-    async openShareDialogWithData(nodeData) {
+    openShareDialogWithData(nodeData) {
       this.$emit('open-share', nodeData)
     },
     openMoveFileDialogWithData(nodeData) {
