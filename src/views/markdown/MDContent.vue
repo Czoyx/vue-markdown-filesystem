@@ -126,9 +126,9 @@ export default {
       this.$emit('open-move', nodeData)
     },
     handleKeyUp(event) {
-      event.preventDefault() // 阻止浏览器默认保存操作
       // 检查按下的键是否是回车键
       if (event.ctrlKey && event.key === 's') {
+        event.preventDefault() // 阻止浏览器默认保存操作
         if (!this.readOnly) {
           this.submitForm()
         } else {

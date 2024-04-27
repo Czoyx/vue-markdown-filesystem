@@ -10,7 +10,7 @@
       <div class="bullshit">
         <div class="bullshit__oops">OOPS!</div>
         <div class="bullshit__info">查看
-          <a style="color:#20a0ff" href="http://localhost:9528/#/markdown" target="_blank">我的云文档</a>
+          <a style="color:#20a0ff" href="http://localhost:9528/#/" target="_blank">我的云文档</a>
         </div>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请确认链接正确性</div>
