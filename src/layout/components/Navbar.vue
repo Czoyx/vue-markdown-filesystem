@@ -1,13 +1,17 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <el-avatar :style="`background:${extractColorByName(username)}`">{{ username }}</el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -16,12 +20,6 @@
               Home
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
@@ -35,11 +33,18 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { extractColorByName } from '@/utils/avatar'
+import { getInfo } from '@/api/user'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  props: {
+    username: {
+      type: String
+    }
   },
   computed: {
     ...mapGetters([
@@ -47,8 +52,19 @@ export default {
       'avatar'
     ])
   },
+  async created() {
+    const res = await getInfo()
+    const { code, data, msg } = res
+    if (code === 200) {
+      this.username = data.name
+    } else {
+      console.log(msg)
+    }
+  },
   methods: {
+    extractColorByName,
     toggleSideBar() {
+      this.$emit('toggleSidebar')
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
