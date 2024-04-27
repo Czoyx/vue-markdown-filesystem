@@ -61,6 +61,11 @@ export default {
   },
   mounted() {
     this.loadEditor()
+    window.addEventListener('keydown', this.handleKeyUp)
+  },
+  beforeDestroy() {
+    // 在组件销毁前移除事件监听器
+    window.removeEventListener('keydown', this.handleKeyUp)
   },
   methods: {
     async loadEditor() {
@@ -119,6 +124,17 @@ export default {
     },
     openMoveFileDialogWithData(nodeData) {
       this.$emit('open-move', nodeData)
+    },
+    handleKeyUp(event) {
+      event.preventDefault() // 阻止浏览器默认保存操作
+      // 检查按下的键是否是回车键
+      if (event.ctrlKey && event.key === 's') {
+        if (!this.readOnly) {
+          this.submitForm()
+        } else {
+          this.$message.warning('无权限！')
+        }
+      }
     }
   }
 }
