@@ -366,8 +366,9 @@ export default {
         const id = this.currentAddUserData.userId
         if (id === '0') {
           await this.handleChange(0, { user_id: this.allUserList[0].value })
+        } else {
+          await this.handleChange(perVal, { user_id: this.allUserList[0].value })
         }
-        await this.handleChange(perVal, { user_id: this.allUserList[0].value })
       }
     }
   }
