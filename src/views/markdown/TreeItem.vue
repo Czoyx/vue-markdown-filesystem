@@ -79,35 +79,19 @@ export default {
     }
   },
   methods: {
-    async handleCommand(command) {
+    async handleCommand(command) { // 处理下拉菜单点击事件
       switch (command) {
-        case 'createFile':
-          await this.create('file')
-          break
-        case 'createFolder':
-          await this.create('folder')
-          break
-        case 'delete':
-          await this.delete()
-          break
-        case 'rename':
-          this.startRenameFile()
-          break
-        case 'share':
-          this.$emit('open-share', this.nodeData)
-          break
-        case 'move':
-          this.$emit('open-move', this.nodeData)
-          break
+        case 'createFile':await this.create('file'); break
+        case 'createFolder':await this.create('folder'); break
+        case 'delete':await this.delete(); break
+        case 'rename':this.startRenameFile(); break
+        case 'share':this.$emit('open-share', this.nodeData); break// 打开分享对话框
+        case 'move':this.$emit('open-move', this.nodeData); break// 打开移动对话框
       }
     },
-    async create(type) {
+    async create(type) { // 创建文件或文件夹
       console.log(this.nodeData.id)
-      const submitData = {
-        content: '',
-        file_name: '未命名' + (type === 'file' ? '文件' : '文件夹'),
-        parent_id: this.nodeData.id
-      }
+      const submitData = { content: '', parent_id: this.nodeData.id, file_name: '未命名' + (type === 'file' ? '文件' : '文件夹') }
       const res = type === 'file' ? await createFile(submitData) : await createFolder(submitData)
       const { code, data, msg } = res
       if (code === 200) {
@@ -115,36 +99,26 @@ export default {
         const res1 = await getFileInfo(data)
         const { code: code1, data: data1, msg: msg1 } = res1
         if (code1 === 200) {
+          // 同步添加节点
           await this.$store.dispatch('menu/appendAt', { nodeId: this.nodeData.id, fileData: data1 })
-        } else {
-          this.$message.error(msg1)
-        }
-      } else {
-        this.$message.success(msg)
-      }
+        } else { this.$message.error(msg1) }
+      } else { this.$message.success(msg) }
     },
-    async delete() {
+    async delete() { // 删除文件或文件夹
       const id = this.nodeData.id
       const res = await deleteFile(id)
       const { code } = res
       if (code === 200) {
         this.$message.success('删除成功')
-        this.$store.dispatch('menu/deleteNode', id)
+        this.$store.dispatch('menu/deleteNode', id) // 同步删除节点
       }
     },
-    startRenameFile() {
-      this.isEditor = true
-    },
+    startRenameFile() { this.isEditor = true },
     renameFile(file_name) {
-      const renameData = {
-        file_name: file_name,
-        file_id: this.nodeData.id
-      }
+      const renameData = { file_name: file_name, file_id: this.nodeData.id }
       const res = rename(renameData)
       const { code } = res
-      if (code === 200) {
-        this.$message.success('重命名成功')
-      }
+      if (code === 200) { this.$message.success('重命名成功') }
       this.isEditor = false
     }
   }
